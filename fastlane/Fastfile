@@ -10,8 +10,8 @@ platform :ios do
   lane :release do |options|
 
     if (options[:to_appaloosa])
-        increment_build_number(build_number: get_build_number_from_appaloosa(group_name: "DeveryLight", with_increment: true, app_identifier: "com.deveryware.#{options[:build]}"))
-        sigh(adhoc: true, skip_install: true, app_identifier: "com.deveryware.#{options[:build]}", filename: "com.deveryware.#{options[:build]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
+        increment_build_number(build_number: get_build_number_from_appaloosa(group_name: "DlightPalier", with_increment: true, app_identifier: "#{options[:build]}"))
+        sigh(adhoc: true, skip_install: true, app_identifier: "#{options[:build]}", filename: "#{options[:build]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
         #update_project_provisioning(xcodeproj: "platforms/ios/#{options[:build]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
         #recreate_schemes(project: "platforms/ios/#{options[:build]}.xcodeproj")
         gym(scheme: options[:build], project: "platforms/ios/#{options[:build]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:build]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
