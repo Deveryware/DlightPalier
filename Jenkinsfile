@@ -1,6 +1,6 @@
 env.LC_CTYPE = 'en_US.UTF-8'
 env.APPNAME = 'DlightPalier'
-env.BUNDLEID = 'dlightpalier'
+env.BUNDLEID = 'com.deveryware.dlightpalier'
 
 node('macosx-1') {
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
