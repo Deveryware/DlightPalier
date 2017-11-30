@@ -1,12 +1,6 @@
-package_name "com.deveryware.deverylight"
-app_identifier "com.deveryware.deverylight" # The bundle identifier of your app
+package_name "com.deveryware.dlightpalier"
+app_identifier "com.deveryware.dlightpalier" # The bundle identifier of your app
 apple_id "dev.apple@deveryware.com" # Your Apple email address
 
 team_id "YY96N698P3"  # Developer Portal Team ID
 itc_team_id "460500" # Itunes Team ID
-
-for_platform :ios do
-  for_lane :release do
-    app_identifier 'com.deveryware.*'
-  end
-end
