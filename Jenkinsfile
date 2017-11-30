@@ -72,7 +72,7 @@ node('macosx-1') {
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                 ]) {
                     stage ('build and deploy ios') {
-                        sh "~/.rbenv/shims/bundle exec fastlane ios release build:${APPNAME}-${build} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT}"
+                        sh "~/.rbenv/shims/bundle exec fastlane ios release build:${APPNAME}-${target} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT}"
                     }
                 }
 
