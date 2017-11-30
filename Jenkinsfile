@@ -48,8 +48,6 @@ node('macosx-1') {
                 sh "cat config.xml.tmp | head"
                 sh "cat config.xml.tmp2 | head"
                 sh "cat config.xml | head"
-                sh "sed -i.bu \"s/${APPNAME}\\/${APPNAME}-Info.plist/${APPNAME}-${target}\\/${APPNAME}-${target}-Info.plist/g\" scripts/ios_compliance_code.js"
-                sh "sed -i.bu \"s/${APPNAME}\\/${APPNAME}-Info.plist/${APPNAME}-${target}\\/${APPNAME}-${target}-Info.plist/g\" scripts/ios_non_exempt_encryption.js"
 
                 withCredentials([
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
