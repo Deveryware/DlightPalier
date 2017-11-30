@@ -3,7 +3,6 @@ env.APPNAME = 'DlightPalier'
 env.BUNDLEID = 'dlightpalier'
 
 node('macosx-1') {
-    env.PATH = '/Users/jenkins/.rbenv/bin:/Users/jenkins/.rbenv/shims:/usr/local/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
 
