@@ -60,7 +60,7 @@ node('macosx-1') {
                         stage ('build ios') {
                             echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                             echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
-                            sh 'npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova prepare ios'
+                            sh 'npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios'
                         }
                     }
                 }
