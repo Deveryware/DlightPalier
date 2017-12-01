@@ -6,9 +6,10 @@ platform :ios do
     unlock_keychain
   end
 
-  desc "Submit a new build"
+  desc "Submit a new iOS build"
   lane :release do |options|
 
+    desc "Upload iOS to Appaloosa"
     if (options[:to_appaloosa])
         sigh(adhoc: true, skip_install: true, app_identifier: "#{options[:app_identifier]}", filename: "#{options[:app_identifier]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
         update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
@@ -17,24 +18,19 @@ platform :ios do
         appaloosa(group_ids: options[:appaloosa_group_ids], screenshots: "")
     end
 
-
+    desc "Upload iOS to Testflight"
     if (options[:to_testflight])
-        #pilot(app_identifier: "com.deveryware.deverylight")
+        pilot(app_identifier: "#{options[:app_identifier]}")
     end
   end
 end
 
 
-
-
-
-
-
-
 platform :android do
 
-  desc "Submit a new build"
+  desc "Submit a new Android build"
   lane :release do |options|
+
     sign_apk(
       apk_path: "platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk",
       signed_apk_path: "platforms/android/build/outputs/apk/android-release-unaligned.apk",
@@ -42,14 +38,18 @@ platform :android do
       storepass: "deveryware",
       alias: "deveryware"
     )
+
     zipalign(
       unaligned_apk_path: "platforms/android/build/outputs/apk/android-release-unaligned.apk",
-      aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:build]}.apk")
+      aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:app]}.apk"
+    )
 
+    desc "Upload Android to Appaloosa"
     if (options[:to_appaloosa])
-      #appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:build]}.apk", group_ids: "11777", screenshots: "")
+      appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:app]}.apk", group_ids: options[:appaloosa_group_ids], screenshots: "")
     end
 
+    desc "Upload Android to Google Play Beta"
     if (options[:to_store])
       #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
     end
