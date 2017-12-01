@@ -19,8 +19,7 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
 
 node('macosx-1') {
 
-    def versionNumber = getVersionNumber("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico.integ")
-    def versionNumberIncremented = versionNumber + 1
+    def versionNumberIncremented = getVersionNumberIncremented("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico.integ")
     echo "versionNumberIncremented: ${versionNumberIncremented}"
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
