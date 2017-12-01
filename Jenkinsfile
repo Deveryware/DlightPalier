@@ -4,11 +4,13 @@ env.LC_CTYPE = 'en_US.UTF-8'
 env.APPNAME = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
 
+
+URL apiUrl = "https://www.appaloosa-store.com/api/v2/189/mobile_application_updates?api_key=yxxiejejz1rstl17yadvmii1rsjx59&group_name=Notico".toURL()
+def slurper = new JsonSlurperClassic()
+
 node('macosx-1') {
 
-          URL apiUrl = "https://www.appaloosa-store.com/api/v2/189/mobile_application_updates?api_key=yxxiejejz1rstl17yadvmii1rsjx59&group_name=Notico".toURL()
 
-          def slurper = new JsonSlurperClassic()
 
 
 
