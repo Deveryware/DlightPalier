@@ -10,7 +10,7 @@ node('macosx-1') {
 
           def slurper = new JsonSlurper()
           def json = new HashMap<>(slurper.parse(apiUrl.newReader()))
-          echo "jsonparsed: ${json.mobile_application_updates[0].application_id}"
+          echo "jsonparsed: ${json["mobile_application_updates"]}"
 
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
