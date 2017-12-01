@@ -25,9 +25,9 @@ node('macosx-1') {
     env.FL_APPALOOSA_API_TOKEN = "yxxiejejz1rstl17yadvmii1rsjx59"
 
 
-    def targetA = "integ"
-    def applicationId = "${BUNDLEID}-${targetA}"
-    def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, ${FL_APPALOOSA_API_TOKEN}, ${APPNAME}, ${applicationId})
+    //def targetA = "integ"
+    //def applicationId = "${BUNDLEID}-${targetA}"
+    def versionNumberIncremented = getVersionNumberIncremented("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico-integ")
 
 
     stage ('environment') {
