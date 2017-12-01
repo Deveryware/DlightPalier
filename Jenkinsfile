@@ -1,8 +1,8 @@
 import groovy.json.JsonSlurperClassic
 
 env.LC_CTYPE = 'en_US.UTF-8'
-env.APPNAME = 'DlightPalier'
-env.BUNDLEID = 'com.deveryware.dlightpalier'
+env.APPNAME = 'Notico'
+env.BUNDLEID = 'com.deveryware.notico'
 
 @NonCPS
 def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId) {
@@ -18,9 +18,6 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
 }
 
 node('macosx-1') {
-
-    def versionNumberIncremented = getVersionNumberIncremented("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico.integ")
-    echo "versionNumberIncremented: ${versionNumberIncremented}"
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
@@ -96,6 +93,8 @@ node('macosx-1') {
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                 ]) {
                     stage ('build and deploy ios') {
+                        def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, ${FL_APPALOOSA_API_TOKEN}, ${APPNAME}, ${APPNAME}-${target})
+                        echo "versionNumberIncremented: ${versionNumberIncremented}"
                         sh "~/.rbenv/shims/bundle exec fastlane ios release build:${APPNAME}-${target} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT}"
                     }
                 }
