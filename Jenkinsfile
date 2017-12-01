@@ -5,15 +5,16 @@ env.APPNAME = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
 
 @NonCPS
-def getVersionNumber(def storeId, def apiKey, def groupName, def applicationId) {
+def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId) {
     URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
     for (def val:json['mobile_application_updates']) {
-      if (val['application_id'].equals("com.deveryware.notico.integ")) {
-        return val['version'].toInteger()
+      if (val['application_id'].equals(applicationId)) {
+        return val['version'].toInteger() + 1
       }
     }
+    return 1
 }
 
 node('macosx-1') {
