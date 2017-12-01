@@ -6,7 +6,7 @@ env.BUNDLEID = 'com.deveryware.dlightpalier'
 
 @NonCPS
 def getVersionNumber(def storeId, def apiKey, def groupName) {
-    URL apiUrl = "https://www.appaloosa-store.com/api/v2/${target}/mobile_application_updates?api_key=${target}&group_name=${groupName}".toURL()
+    URL apiUrl = "https://www.appaloosa-store.com/api/v2/${target}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
     for (def val:json['mobile_application_updates']) {
@@ -18,7 +18,7 @@ def getVersionNumber(def storeId, def apiKey, def groupName) {
 
 node('macosx-1') {
 
-    def versionNumber = jsonParse(189, yxxiejejz1rstl17yadvmii1rsjx59, Notico)
+    def versionNumber = jsonParse("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico")
 
 
 
