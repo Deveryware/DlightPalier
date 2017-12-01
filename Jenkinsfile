@@ -5,21 +5,21 @@ env.APPNAME = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
 
 @NonCPS
-def getVersionNumber(def storeId, def apiKey, def groupName) {
+def getVersionNumber(def storeId, def apiKey, def groupName, def applicationId) {
     URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
     for (def val:json['mobile_application_updates']) {
       if (val['application_id'].equals("com.deveryware.notico.integ")) {
-        echo "${toto['application_id']}"
+        return ${val['version']}
       }
     }
 }
 
 node('macosx-1') {
 
-    def versionNumber = getVersionNumber("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico")
-
+    def versionNumber = getVersionNumber("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico.integ")
+    echo "version number: ${versionNumber}"
 
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
