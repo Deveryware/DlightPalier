@@ -10,7 +10,7 @@ node('macosx-1') {
 
           def slurper = new JsonSlurper()
           def json = slurper.parse(apiUrl.newReader())
-          echo "jsonparsed: ${json.getClass()}"
+          echo "jsonparsed: ${json}"
 
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
