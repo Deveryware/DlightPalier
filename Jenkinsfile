@@ -9,7 +9,7 @@ node('macosx-1') {
           URL apiUrl = "https://www.appaloosa-store.com/api/v2/189/mobile_application_updates?api_key=yxxiejejz1rstl17yadvmii1rsjx59&group_name=Notico".toURL()
 
           def slurper = new JsonSlurper()
-          def json = slurper.parse(apiUrl.newReader())
+
 
 
 
