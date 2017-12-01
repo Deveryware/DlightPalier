@@ -25,8 +25,8 @@ node('macosx-1') {
     env.FL_APPALOOSA_API_TOKEN = yxxiejejz1rstl17yadvmii1rsjx59
 
 
-    def target = "integ"
-    def applicationId = ${BUNDLEID}-${target}
+    def targetA = "integ"
+    def applicationId = ${BUNDLEID}-${targetA}
     def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, ${FL_APPALOOSA_API_TOKEN}, ${APPNAME}, ${applicationId})
 
 
