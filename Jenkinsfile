@@ -1,6 +1,5 @@
 import groovy.json.JsonSlurperClassic
 
-env.LC_CTYPE = 'en_US.UTF-8'
 env.APPNAME = 'Notico'
 env.BUNDLEID = 'com.deveryware.notico'
 env.APPALOOSA_GROUP_IDS = '16136'
@@ -20,6 +19,7 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
 
 node('macosx-1') {
 
+    env.LC_CTYPE = 'en_US.UTF-8'
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
 
@@ -86,16 +86,15 @@ node('macosx-1') {
 
                             echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                             echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+                        }
 
+                        stage ('generate ios app with Ionic Cordova') {
                             sh 'npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios'
                         }
-                    }
-                }
 
-                withCredentials([
-                ]) {
-                    stage ('build and deploy ios') {
-                        sh "~/.rbenv/shims/bundle exec fastlane ios release app:${APPNAME}-${target} app_identifier:${BUNDLEID}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT}"
+                        stage ('build, sign and deploy ios with Fastlane') {
+                            sh "~/.rbenv/shims/bundle exec fastlane ios release app:${APPNAME}-${target} app_identifier:${BUNDLEID}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT}"
+                        }
                     }
                 }
 
