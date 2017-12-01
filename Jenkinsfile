@@ -97,9 +97,6 @@ node('macosx-1') {
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                 ]) {
                     stage ('build and deploy ios') {
-                        def applicationId = ${BUNDLEID}-${target}
-                        def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, ${FL_APPALOOSA_API_TOKEN}, ${APPNAME}, ${applicationId})
-                        echo "versionNumberIncremented: ${versionNumberIncremented}"
                         sh "~/.rbenv/shims/bundle exec fastlane ios release build:${APPNAME}-${target} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT}"
                     }
                 }
