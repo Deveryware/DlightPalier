@@ -119,8 +119,8 @@ node('macosx-1') {
                     }
                 }
 
-                stage ('archive ios') {
-                    archive '**/*.ipa'
+                stage ('archive android') {
+                  archive "**/deverylight-${env.PLATFORM}.apk"
                 }
             }
         }
