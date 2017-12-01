@@ -18,7 +18,7 @@ def getVersionNumber(def storeId, def apiKey, def groupName) {
 
 node('macosx-1') {
 
-    def versionNumber = jsonParse("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico")
+    def versionNumber = getVersionNumber("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico")
 
 
 
