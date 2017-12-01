@@ -26,7 +26,7 @@ node('macosx-1') {
 
 
     def targetA = "integ"
-    def applicationId = ${BUNDLEID}-${targetA}
+    def applicationId = "${BUNDLEID}-${targetA}"
     def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, ${FL_APPALOOSA_API_TOKEN}, ${APPNAME}, ${applicationId})
 
 
