@@ -50,7 +50,7 @@ platform :android do
     end
 
     desc "Upload Android to Google Play Beta"
-    if (options[:to_store])
+    if (options[:to_google_play_beta])
       #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
     end
   end
