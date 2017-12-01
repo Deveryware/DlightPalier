@@ -6,7 +6,7 @@ env.BUNDLEID = 'com.deveryware.dlightpalier'
 
 @NonCPS
 def getVersionNumber(def storeId, def apiKey, def groupName) {
-    URL apiUrl = "https://www.appaloosa-store.com/api/v2/${target}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
+    URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
     for (def val:json['mobile_application_updates']) {
