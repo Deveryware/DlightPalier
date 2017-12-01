@@ -87,6 +87,7 @@ node('macosx-1') {
 
                         stage ('generate android app code with Ionic Cordova') {
                             sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+
                             sh 'cordova plugin add cordova-plugin-device'
                             sh 'cordova plugin add cordova-plugin-console'
                             sh 'cordova plugin add cordova-plugin-whitelist'
@@ -110,7 +111,7 @@ node('macosx-1') {
                         }
 
                         stage ('build android with Cordova and Gradle') {
-                            sh 'ionic build android --release'
+                            sh 'ionic cordova build android --release'
                         }
 
                         stage ('sign and deploy android with Fastlane') {
