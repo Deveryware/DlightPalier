@@ -1,0 +1,60 @@
+default_platform :ios
+
+platform :ios do
+
+  before_all do
+    unlock_keychain
+  end
+
+  desc "Submit a new build"
+  lane :release do |options|
+
+    if (options[:to_appaloosa])
+        increment_build_number(build_number: get_build_number_from_appaloosa(group_name: "DlightPalier", with_increment: true, app_identifier: "#{options[:build]}"))
+        sigh(adhoc: true, skip_install: true, app_identifier: "#{options[:build]}", filename: "#{options[:build]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
+        #update_project_provisioning(xcodeproj: "platforms/ios/#{options[:build]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
+        #recreate_schemes(project: "platforms/ios/#{options[:build]}.xcodeproj")
+        gym(scheme: options[:build], project: "platforms/ios/#{options[:build]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:build]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
+        #appaloosa(group_ids: "11777", screenshots: "")
+    end
+
+
+    if (options[:to_testflight])
+        #pilot(app_identifier: "com.deveryware.deverylight")
+    end
+  end
+end
+
+
+
+
+
+
+
+
+platform :android do
+
+  desc "Submit a new build"
+  lane :release do |options|
+    sign_apk(
+      apk_path: "platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk",
+      signed_apk_path: "platforms/android/build/outputs/apk/android-release-unaligned.apk",
+      tsa: "http://timestamp.comodoca.com/rfc3161",
+      storepass: "deveryware",
+      alias: "deveryware"
+    )
+    zipalign(
+      unaligned_apk_path: "platforms/android/build/outputs/apk/android-release-unaligned.apk",
+      aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:build]}.apk")
+
+    if (options[:to_appaloosa])
+      #appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:build]}.apk", group_ids: "11777", screenshots: "")
+    end
+
+    if (options[:to_store])
+      #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
+    end
+  end
+
+end
+
