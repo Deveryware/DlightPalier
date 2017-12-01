@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurperClassic
 
-env.APPNAME = 'Notico'
-env.BUNDLEID = 'com.deveryware.notico'
+env.APPNAME = 'DlightPalier'
+env.BUNDLEID = 'com.deveryware.dlightpalier'
 env.APPALOOSA_GROUP_IDS = '16136'
 
 @NonCPS
@@ -88,7 +88,7 @@ node('macosx-1') {
                             echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
                         }
 
-                        stage ('generate ios app with Ionic Cordova') {
+                        stage ('generate ios app code with Ionic Cordova') {
                             sh 'npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios'
                         }
 
