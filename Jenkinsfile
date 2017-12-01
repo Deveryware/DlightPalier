@@ -11,8 +11,7 @@ def getVersionNumber(def storeId, def apiKey, def groupName, def applicationId) 
 
     for (def val:json['mobile_application_updates']) {
       if (val['application_id'].equals("com.deveryware.notico.integ")) {
-        echo "versionNumber: ${val['version']}"
-        return val['version']
+        return val['version'].toInteger()
       }
     }
 }
