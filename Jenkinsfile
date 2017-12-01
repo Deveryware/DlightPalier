@@ -8,7 +8,7 @@ env.BUNDLEID = 'com.deveryware.dlightpalier'
 node('macosx-1') {
 
           URL apiUrl = "https://www.appaloosa-store.com/api/v2/189/mobile_application_updates?api_key=yxxiejejz1rstl17yadvmii1rsjx59&group_name=Notico".toURL()
-          List json = new JsonSlurper().parse(apiUrl.newReader())
+          def json = new JsonSlurper().parse(apiUrl.newReader())
           echo "jsonparsed: ${json.mobile_application_updates[0].application_id}"
 
 
