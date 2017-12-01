@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurperClassic
+
 env.LC_CTYPE = 'en_US.UTF-8'
 env.APPNAME = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
@@ -42,6 +44,14 @@ node('macosx-1') {
 
     dir('.') {
         for (target in targets) {
+
+          URL apiUrl = "https://www.appaloosa-store.com/api/v2/189/mobile_application_updates?api_key=yxxiejejz1rstl17yadvmii1rsjx59&group_name=Notico".toURL()
+          List json = new JsonSlurper().parse(apiUrl.newReader())
+          echo "jsonparsed: ${json.mobile_application_updates[0].icon_url}"
+
+
+
+
             stage ('ios app') {
                 sh "sed \"s/${BUNDLEID}/${BUNDLEID}-${target}/g\" config.xml > config.xml.tmp"
                 sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
