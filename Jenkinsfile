@@ -27,7 +27,7 @@ node('macosx-1') {
 
     //def targetA = "integ"
     //def applicationId = "${BUNDLEID}-${targetA}"
-    def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico-integ")
+    def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico-integ")
 
 
     stage ('environment') {
