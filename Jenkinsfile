@@ -13,8 +13,8 @@ def jsonParse() {
 node('macosx-1') {
 
     def json = jsonParse()
-    json['mobile_application_updates'].each {
-       echo "${it['application_id']}"
+    for (def toto:json['mobile_application_updates']) {
+       echo "${toto['application_id']}"
     }
 
 
