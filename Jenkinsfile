@@ -114,7 +114,7 @@ node('macosx-1') {
                         }
 
                         stage ('sign and deploy android with Fastlane') {
-                            sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
+                            sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
                         }
                     }
                 }
