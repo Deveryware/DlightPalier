@@ -13,7 +13,7 @@ def jsonParse() {
 node('macosx-1') {
 
     def json = jsonParse()
-    echo "${json[mobile_application_updates"]}"
+    echo "${json['mobile_application_updates']}"
 
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
