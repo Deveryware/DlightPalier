@@ -21,6 +21,14 @@ node('macosx-1') {
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
+    env.FL_APPALOOSA_STORE_ID = 189
+    env.FL_APPALOOSA_API_TOKEN = yxxiejejz1rstl17yadvmii1rsjx59
+
+
+    def target = "integ"
+    def applicationId = ${BUNDLEID}-${target}
+    def versionNumberIncremented = getVersionNumberIncremented(${FL_APPALOOSA_STORE_ID}, ${FL_APPALOOSA_API_TOKEN}, ${APPNAME}, ${applicationId})
+
 
     stage ('environment') {
         sh "env"
