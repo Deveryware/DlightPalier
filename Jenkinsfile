@@ -48,9 +48,6 @@ node('macosx-1') {
           URL apiUrl = "https://www.appaloosa-store.com/api/v2/189/mobile_application_updates?api_key=yxxiejejz1rstl17yadvmii1rsjx59&group_name=Notico".toURL()
           List json = new JsonSlurper().parse(apiUrl.newReader())
           echo "jsonparsed: ${json.mobile_application_updates[0].icon_url}"
-          def json = readFile(file:'message2.json')
-          def data = new JsonSlurperClassic().parseText(json)
-          echo "color: ${data.attachments[0].color}"
 
 
 
