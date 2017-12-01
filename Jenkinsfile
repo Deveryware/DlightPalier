@@ -11,6 +11,7 @@ def getVersionNumber(def storeId, def apiKey, def groupName, def applicationId) 
 
     for (def val:json['mobile_application_updates']) {
       if (val['application_id'].equals("com.deveryware.notico.integ")) {
+        echo "versionNumber: ${val['version']}"
         return ${val['version']}
       }
     }
@@ -19,7 +20,7 @@ def getVersionNumber(def storeId, def apiKey, def groupName, def applicationId) 
 node('macosx-1') {
 
     def versionNumber = getVersionNumber("189", "yxxiejejz1rstl17yadvmii1rsjx59", "Notico", "com.deveryware.notico.integ")
-    echo "version number: ${versionNumber}"
+
 
 
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
