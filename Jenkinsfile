@@ -9,7 +9,10 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
     URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
+    echo "json : ${json}"
+
     for (def val:json['mobile_application_updates']) {
+      echo "val : json['mobile_application_updates']"
       if (val['application_id'].equals(applicationId)) {
         echo "inside for if : ${val['version']}"
         return val['version'].toInteger() + 1
