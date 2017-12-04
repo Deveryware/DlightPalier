@@ -12,7 +12,8 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
     echo "json : ${json}"
 
     for (def val:json['mobile_application_updates']) {
-      echo "val : json['mobile_application_updates']"
+      echo "val : ${json['mobile_application_updates']}"
+      echo "applicationId : ${applicationId}"
       if (val['application_id'].equals(applicationId)) {
         echo "inside for if : ${val['version']}"
         return val['version'].toInteger() + 1
@@ -25,9 +26,9 @@ node('macosx-1') {
 
     env.LC_CTYPE = 'en_US.UTF-8'
 
-    stage ('android environment') {
-        sh "env"
-    }
+    //stage ('android environment') {
+    //    sh "env"
+    //}
 
     stage ('git clone') {
         checkout scm
