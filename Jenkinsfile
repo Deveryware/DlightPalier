@@ -64,7 +64,6 @@ node('macosx-1') {
                     [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
-
                 ]) {
                     withEnv([
                     "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
@@ -114,9 +113,9 @@ node('macosx-1') {
                             sh 'ionic cordova build android --release'
                         }
 
-                        stage ('sign and deploy android with Fastlane') {
-                            sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
-                        }
+                        //stage ('sign and deploy android with Fastlane') {
+                        //    sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
+                        //}
                     }
                 }
 
@@ -124,6 +123,20 @@ node('macosx-1') {
                   archive "**/deverylight-${env.PLATFORM}.apk"
                 }
             }
+
+                   withCredentials([
+                        [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
+                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
+                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
+                   ]) {
+                      stage ('deploy android') {
+                        sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
+                      }
+                   }
+
+                   stage ('archive android') {
+                    archive "**/deverylight-${env.PLATFORM}.apk"
+                   }
         }
     }
 }
