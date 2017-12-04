@@ -72,6 +72,7 @@ node('macosx-1') {
                           if ("${TO_APPALOOSA}" == "true") {
                              def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
                              echo "versionNumberIncremented: ${versionNumberIncremented}"
+
                              sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
                              sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
                              sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
