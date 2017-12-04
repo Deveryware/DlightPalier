@@ -13,7 +13,7 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
       if (val['application_id'] == applicationId) {
         def existingVersion = val['version']
         echo "existingVersion: ${existingVersion}"
-        if (${android} == "true") {
+        if ("${android}" == "true") {
           def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1)
           echo "existingVersionTruncated: ${existingVersionTruncated}"
           return existingVersionTruncated.toInteger() + 1
