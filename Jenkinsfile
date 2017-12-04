@@ -10,11 +10,9 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
      for (def val:json['mobile_application_updates']) {
-      echo "val : ${json['mobile_application_updates']}"
-      echo "val['application_id'] : ${val['application_id']}"
-      echo "applicationId : ${applicationId}"
       if (val['application_id'] == applicationId) {
-        echo "inside for if : ${val['application_id']}"
+        def existingVersion = val['version']
+        def existingVersionTruncated = existingVersion.drop(-1)
         return val['version'].toInteger() + 1
       }
     }
