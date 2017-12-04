@@ -61,7 +61,6 @@ node('macosx-1') {
                 withCredentials([
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
-                    [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                 ]) {
@@ -86,7 +85,6 @@ node('macosx-1') {
 
                         stage ('generate android app code with Ionic Cordova') {
                             sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
-
                             sh 'cordova plugin add cordova-plugin-device'
                             sh 'cordova plugin add cordova-plugin-console'
                             sh 'cordova plugin add cordova-plugin-whitelist'
@@ -112,31 +110,23 @@ node('macosx-1') {
                         stage ('build android with Cordova and Gradle') {
                             sh 'ionic cordova build android --release'
                         }
-
-                        //stage ('sign and deploy android with Fastlane') {
-                        //    sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
-                        //}
                     }
+                }
+
+                withCredentials([
+                     [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
+                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
+                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
+                ]) {
+                   stage ('deploy android') {
+                     sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
+                   }
                 }
 
                 stage ('archive android') {
                   archive "**/deverylight-${env.PLATFORM}.apk"
                 }
             }
-
-                   withCredentials([
-                        [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
-                   ]) {
-                      stage ('deploy android') {
-                        sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
-                      }
-                   }
-
-                   stage ('archive android') {
-                    archive "**/deverylight-${env.PLATFORM}.apk"
-                   }
         }
     }
 }
