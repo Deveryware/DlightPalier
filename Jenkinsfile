@@ -7,12 +7,9 @@ env.APPALOOSA_GROUP_IDS = '16136'
 @NonCPS
 def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId) {
     URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
-    echo "${apiUrl}"
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
-    echo "json : ${json}"
-
-    for (def val:json['mobile_application_updates']) {
+     for (def val:json['mobile_application_updates']) {
       echo "val : ${json['mobile_application_updates']}"
       echo "val['application_id'] : ${val['application_id']}"
       echo "applicationId : ${applicationId}"
@@ -75,9 +72,9 @@ node('macosx-1') {
                     "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
                     "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
                     ]) {
-                        stage ('change config.xml for ios') {
+                        stage ('change config.xml for android') {
                           if ("${TO_APPALOOSA}" == "true") {
-                             def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
+                             def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}_${target}")
                              echo "versionNumberIncremented: ${versionNumberIncremented}"
 
                              sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
@@ -89,8 +86,8 @@ node('macosx-1') {
                           }
 
 
-                            echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
-                            echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+                          echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
+                          echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
                         }
 
                         stage ('generate android app code with Ionic Cordova') {
