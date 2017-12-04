@@ -12,8 +12,10 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
      for (def val:json['mobile_application_updates']) {
       if (val['application_id'] == applicationId) {
         def existingVersion = val['version']
-        def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1);
-        return val['version'].toInteger() + 1
+        echo "existingVersion: ${existingVersion}"
+        def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1)
+        echo "existingVersionTruncated: ${existingVersionTruncated}"
+        return existingVersionTruncated.toInteger() + 1
       }
     }
     return 1
@@ -78,8 +80,6 @@ node('macosx-1') {
                              sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
                              sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
                              sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
-                             sh "cat config.xml.tmp | head"
-                             sh "cat config.xml.tmp2 | head"
                              sh "cat config.xml | head"
                           }
 
@@ -199,8 +199,6 @@ node('macosx-1') {
                               sh "sed \"s/${BUNDLEID}/${BUNDLEID}-${target}/g\" config.xml > config.xml.tmp"
                               sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
                               sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
-                              sh "cat config.xml.tmp | head"
-                              sh "cat config.xml.tmp2 | head"
                               sh "cat config.xml | head"
                             }
 
