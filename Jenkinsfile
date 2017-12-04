@@ -12,7 +12,7 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
      for (def val:json['mobile_application_updates']) {
       if (val['application_id'] == applicationId) {
         def existingVersion = val['version']
-        def existingVersionTruncated = existingVersion.drop(-1)
+        def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1);
         return val['version'].toInteger() + 1
       }
     }
