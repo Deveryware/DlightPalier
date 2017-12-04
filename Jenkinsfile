@@ -143,9 +143,9 @@ node('macosx-1') {
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
 
-    stage ('ios environment') {
-        sh "env"
-    }
+    //stage ('ios environment') {
+    //    sh "env"
+    //}
 
     stage ('git clone') {
         checkout scm
