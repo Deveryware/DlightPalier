@@ -7,6 +7,7 @@ env.APPALOOSA_GROUP_IDS = '16136'
 @NonCPS
 def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId) {
     URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
+    echo "${apiUrl}"
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
     echo "json : ${json}"
