@@ -5,7 +5,7 @@ env.BUNDLEID = 'com.deveryware.dlightpalier'
 env.APPALOOSA_GROUP_IDS = '16136'
 
 @NonCPS
-def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId) {
+def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
     URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
 
@@ -13,9 +13,12 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
       if (val['application_id'] == applicationId) {
         def existingVersion = val['version']
         echo "existingVersion: ${existingVersion}"
-        def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1)
-        echo "existingVersionTruncated: ${existingVersionTruncated}"
-        return existingVersionTruncated.toInteger() + 1
+        if (${android} == "true" {
+          def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1)
+          echo "existingVersionTruncated: ${existingVersionTruncated}"
+          return existingVersionTruncated.toInteger() + 1
+        }
+        return existingVersion.toInteger() + 1
       }
     }
     return 1
@@ -74,7 +77,7 @@ node('macosx-1') {
                     ]) {
                         stage ('change config.xml for android') {
                           if ("${TO_APPALOOSA}" == "true") {
-                             def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}_${target}")
+                             def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}_${target}", "true")
                              echo "versionNumberIncremented: ${versionNumberIncremented}"
 
                              sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
@@ -195,7 +198,7 @@ node('macosx-1') {
                     ]) {
                         stage ('change config.xml for ios') {
                             if ("${TO_APPALOOSA}" == "true") {
-                              def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
+                              def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}", false)
                               sh "sed \"s/${BUNDLEID}/${BUNDLEID}-${target}/g\" config.xml > config.xml.tmp"
                               sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
                               sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
