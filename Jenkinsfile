@@ -69,15 +69,17 @@ node('macosx-1') {
                     "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
                     ]) {
                         stage ('change config.xml for ios') {
+                          if ("${TO_APPALOOSA}" == "true") {
+                             def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
+                             echo "versionNumberIncremented: ${versionNumberIncremented}"
+                             sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
+                             sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
+                             sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                             sh "cat config.xml.tmp | head"
+                             sh "cat config.xml.tmp2 | head"
+                             sh "cat config.xml | head"
+                          }
 
-                            def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
-                            echo "versionNumberIncremented: ${versionNumberIncremented}"
-                            sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
-                            sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
-                            sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
-                            sh "cat config.xml.tmp | head"
-                            sh "cat config.xml.tmp2 | head"
-                            sh "cat config.xml | head"
 
                             echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                             echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
@@ -189,22 +191,22 @@ node('macosx-1') {
                     "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
                     ]) {
                         stage ('change config.xml for ios') {
-
-                            def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
-
-                            sh "sed \"s/${BUNDLEID}/${BUNDLEID}-${target}/g\" config.xml > config.xml.tmp"
-                            sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
-                            sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
-                            sh "cat config.xml.tmp | head"
-                            sh "cat config.xml.tmp2 | head"
-                            sh "cat config.xml | head"
+                            if ("${TO_APPALOOSA}" == "true") {
+                              def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}-${target}")
+                              sh "sed \"s/${BUNDLEID}/${BUNDLEID}-${target}/g\" config.xml > config.xml.tmp"
+                              sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
+                              sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                              sh "cat config.xml.tmp | head"
+                              sh "cat config.xml.tmp2 | head"
+                              sh "cat config.xml | head"
+                            }
 
                             echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                             echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
                         }
 
                         stage ('generate ios app code with Ionic Cordova') {
-                            sh 'npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios'
+                            sh "npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
                         }
 
                         stage ('build, sign and deploy ios with Fastlane') {
