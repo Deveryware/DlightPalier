@@ -12,10 +12,8 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
      for (def val:json['mobile_application_updates']) {
       if (val['application_id'] == applicationId) {
         def existingVersion = val['version']
-        echo "existingVersion: ${existingVersion}"
         if ("${android}" == "true") {
           def existingVersionTruncated = existingVersion.substring(0, existingVersion.length() - 1)
-          echo "existingVersionTruncated: ${existingVersionTruncated}"
           return existingVersionTruncated.toInteger() + 1
         }
         return existingVersion.toInteger() + 1
@@ -147,11 +145,11 @@ node('macosx-1') {
                     }
 
                     stage ('build, sign and deploy ios with Fastlane') {
-                        sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:DlightPalier app_identifier:${BUNDLEID}"
+                        sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:${APPNAME} app_identifier:${BUNDLEID}"
                     }
 
                     stage ('archive ios') {
-                        archive '**/DlightPalier.ipa'
+                        archive '**/${APPNAME}.ipa'
                     }
                 }
             }
@@ -336,7 +334,7 @@ node('macosx-1') {
                  [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
             ]) {
                stage ('deploy android') {
-                  sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:DlightPalier"
+                  sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:${APPNAME}"
                }
             }
 
