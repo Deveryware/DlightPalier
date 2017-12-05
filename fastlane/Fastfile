@@ -6,30 +6,32 @@ platform :ios do
     unlock_keychain
   end
 
-  desc "Submit a new iOS build"
-  lane :release do |options|
-
-    desc "Upload iOS to Appaloosa"
-    if (options[:to_appaloosa])
-        sigh(adhoc: true, skip_install: true, app_identifier: "#{options[:app_identifier]}", filename: "#{options[:app_identifier]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
-        update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
-        recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
-        gym(scheme: options[:app], project: "platforms/ios/#{options[:app]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:app]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
-        appaloosa(group_ids: options[:appaloosa_group_ids], screenshots: "")
-    end
-
-    desc "Upload iOS to Testflight"
-    if (options[:to_testflight])
-        pilot(app_identifier: "#{options[:app_identifier]}")
-    end
+  desc "iOS build to Appaloosa"
+  lane :appaloosa do |options|
+      sigh(adhoc: true, skip_install: true, app_identifier: "#{options[:app_identifier]}", filename: "#{options[:app_identifier]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
+      update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
+      recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
+      gym(scheme: options[:app], project: "platforms/ios/#{options[:app]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:app]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
+      appaloosa(group_ids: options[:appaloosa_group_ids], screenshots: "")
   end
+
+
+  desc "iOS build to Testflight"
+  lane :testflight do |options|
+      sigh(skip_install: true, app_identifier: "#{options[:app_identifier]}", filename: "#{options[:app_identifier]}.appstore.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
+      update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
+      recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
+      gym(scheme: options[:app], project: "platforms/ios/#{options[:app]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:app]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
+      pilot(app_identifier: "#{options[:app_identifier]}")
+  end
+
 end
 
 
 platform :android do
 
   desc "Submit a new Android build"
-  lane :release do |options|
+  lane :appaloosa do |options|
 
     sign_apk(
       apk_path: "platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk",
