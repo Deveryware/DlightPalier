@@ -3,6 +3,7 @@ import groovy.json.JsonSlurperClassic
 env.APPNAME = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
 env.APPALOOSA_GROUP_IDS = '16136'
+env.MOBILE_DIRECTORY = '.'
 
 @NonCPS
 def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
@@ -64,7 +65,7 @@ node('macosx-1') {
               sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
             }
 
-            dir('.') {
+            dir("${MOBILE_DIRECTORY}") {
                 withCredentials([
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
@@ -122,7 +123,7 @@ node('macosx-1') {
           sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
         }
 
-        dir('.') {
+        dir("${MOBILE_DIRECTORY}") {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
@@ -198,7 +199,7 @@ node('macosx-1') {
               sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
             }
 
-            dir('.') {
+            dir("${MOBILE_DIRECTORY}") {
                 withCredentials([
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
@@ -284,7 +285,7 @@ node('macosx-1') {
           sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
         }
 
-        dir('.') {
+        dir("${MOBILE_DIRECTORY}") {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
