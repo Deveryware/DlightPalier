@@ -262,7 +262,7 @@ node('macosx-1') {
                      [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                 ]) {
                    stage ('deploy android') {
-                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
+                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
                    }
                 }
 
@@ -336,7 +336,7 @@ node('macosx-1') {
                  [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
             ]) {
                stage ('deploy android') {
-                  sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:DlightPalier app_identifier:${BUNDLEID}"
+                  sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:DlightPalier"
                }
             }
 
