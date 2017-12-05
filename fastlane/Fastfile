@@ -7,7 +7,7 @@ platform :ios do
   end
 
   desc "iOS build to Appaloosa"
-  lane :appaloosa do |options|
+  lane :to_appaloosa do |options|
       sigh(adhoc: true, skip_install: true, app_identifier: "#{options[:app_identifier]}", filename: "#{options[:app_identifier]}.adhoc.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
       update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
       recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
@@ -17,7 +17,7 @@ platform :ios do
 
 
   desc "iOS build to Testflight"
-  lane :testflight do |options|
+  lane :to_testflight do |options|
       sigh(skip_install: true, app_identifier: "#{options[:app_identifier]}", filename: "#{options[:app_identifier]}.appstore.mobileprovision", output_path: "~/Library/MobileDevice/Provisioning\ Profiles/")
       update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
       recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
@@ -31,7 +31,7 @@ end
 platform :android do
 
   desc "Submit a new Android build"
-  lane :appaloosa do |options|
+  lane :to_appaloosa do |options|
 
     sign_apk(
       apk_path: "platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk",

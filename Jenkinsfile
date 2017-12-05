@@ -100,7 +100,7 @@ node('macosx-1') {
                             }
 
                             stage ('build, sign and deploy ios with Fastlane') {
-                                sh "~/.rbenv/shims/bundle exec fastlane ios appaloosa app:${APPNAME}-${target} app_identifier:${BUNDLEID}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
+                                sh "~/.rbenv/shims/bundle exec fastlane ios to_appaloosa app:${APPNAME}-${target} app_identifier:${BUNDLEID}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
                             }
                         }
                     }
@@ -136,7 +136,7 @@ node('macosx-1') {
                         }
 
                         stage ('build, sign and deploy ios with Fastlane') {
-                            sh "~/.rbenv/shims/bundle exec fastlane ios testflight app:Deverylight app_identifier:${BUNDLEID}"
+                            sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:Deverylight app_identifier:${BUNDLEID}"
                         }
                     }
                 }
@@ -256,7 +256,7 @@ node('macosx-1') {
                      [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                 ]) {
                    stage ('deploy android') {
-                     sh "~/.rbenv/shims/bundle exec fastlane android release app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
+                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
                    }
                 }
 
