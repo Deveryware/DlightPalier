@@ -12,6 +12,7 @@ platform :ios do
       update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
       recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
       gym(scheme: options[:app], project: "platforms/ios/#{options[:app]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:app]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
+
       appaloosa(group_ids: options[:appaloosa_group_ids], screenshots: "")
   end
 
@@ -22,6 +23,7 @@ platform :ios do
       update_project_provisioning(xcodeproj: "platforms/ios/#{options[:app]}.xcodeproj", profile: lane_context[SharedValues::SIGH_PROFILE_PATH])
       recreate_schemes(project: "platforms/ios/#{options[:app]}.xcodeproj")
       gym(scheme: options[:app], project: "platforms/ios/#{options[:app]}.xcodeproj", archive_path: "/tmp/app.xcarchive", output_name: "#{options[:app]}.ipa", export_team_id: "YY96N698P3", codesigning_identity: "iPhone Distribution: Deveryware (YY96N698P3)")
+
       pilot(app_identifier: "#{options[:app_identifier]}")
   end
 
@@ -46,15 +48,8 @@ platform :android do
       aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:app]}.apk"
     )
 
-    desc "Upload Android to Appaloosa"
-    if (options[:to_appaloosa])
-      appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:app]}.apk", group_ids: options[:appaloosa_group_ids], screenshots: "")
-    end
+    appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:app]}.apk", group_ids: options[:appaloosa_group_ids], screenshots: "")
 
-    desc "Upload Android to Google Play Beta"
-    if (options[:to_google_play_beta])
-      #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
-    end
   end
 
 
@@ -74,15 +69,8 @@ platform :android do
       aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:app]}.apk"
     )
 
-    desc "Upload Android to Appaloosa"
-    if (options[:to_appaloosa])
-      appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:app]}.apk", group_ids: options[:appaloosa_group_ids], screenshots: "")
-    end
+    #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
 
-    desc "Upload Android to Google Play Beta"
-    if (options[:to_google_play_beta])
-      #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
-    end
   end
 
 end
