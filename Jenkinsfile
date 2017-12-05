@@ -128,7 +128,7 @@ node('macosx-1') {
                     "MQTT_SERVICE_URL=wss://deverylight-prod.deveryware.net/mqtt"
                     ]) {
 
-                        echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL
+                        echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                         echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
 
                         stage ('generate ios app code with Ionic Cordova') {
