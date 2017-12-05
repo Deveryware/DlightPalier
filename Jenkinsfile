@@ -96,7 +96,7 @@ node('macosx-1') {
                             }
 
                             stage ('generate ios app code with Ionic Cordova') {
-                                sh "npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
+                                sh "npm install && npm install cordova-custom-config && ionic cordova platform rm ios && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
                             }
 
                             stage ('build, sign and deploy ios with Fastlane') {
@@ -214,7 +214,6 @@ node('macosx-1') {
                              sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                              sh "cat config.xml | head"
                           }
-
 
                           echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                           echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
