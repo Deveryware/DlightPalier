@@ -30,8 +30,36 @@ end
 
 platform :android do
 
-  desc "Submit a new Android build"
+  desc "Android build to Appaloosa"
   lane :to_appaloosa do |options|
+
+    sign_apk(
+      apk_path: "platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk",
+      signed_apk_path: "platforms/android/build/outputs/apk/android-release-unaligned.apk",
+      tsa: "http://timestamp.comodoca.com/rfc3161",
+      storepass: "deveryware",
+      alias: "deveryware"
+    )
+
+    zipalign(
+      unaligned_apk_path: "platforms/android/build/outputs/apk/android-release-unaligned.apk",
+      aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:app]}.apk"
+    )
+
+    desc "Upload Android to Appaloosa"
+    if (options[:to_appaloosa])
+      appaloosa(binary: "platforms/android/build/outputs/apk/#{options[:app]}.apk", group_ids: options[:appaloosa_group_ids], screenshots: "")
+    end
+
+    desc "Upload Android to Google Play Beta"
+    if (options[:to_google_play_beta])
+      #supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
+    end
+  end
+
+
+  desc "Android build to Google Play Beta"
+  lane :to_google_play_beta do |options|
 
     sign_apk(
       apk_path: "platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk",

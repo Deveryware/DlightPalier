@@ -167,8 +167,6 @@ node('macosx-1') {
 
     env.LC_CTYPE = 'en_US.UTF-8'
 
-
-
     def targets = []
 
     try {
@@ -187,9 +185,95 @@ node('macosx-1') {
         println 'TARGET_SNAPSHOT is not defined'
     }
 
+    if ("${TO_APPALOOSA}" == "true") {
+        for (target in targets) {
 
-    for (target in targets) {
+            stage ('git clone') {
+                checkout scm
+            }
 
+            stage ('install bundler') {
+              sh "~/.rbenv/bin/rbenv install -s && ~/.rbenv/bin/rbenv rehash && ~/.rbenv/shims/gem install bundler"
+            }
+
+            stage ('update install gems') {
+              sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
+            }
+
+            dir('.') {
+                withCredentials([
+                    [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
+                    [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
+                    [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
+                    [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
+                ]) {
+                    withEnv([
+                      "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
+                      "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
+                    ]) {
+                        stage ('change config.xml for android') {
+                          if ("${TO_APPALOOSA}" == "true") {
+                             def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}_${target}", "true")
+                             echo "versionNumberIncremented: ${versionNumberIncremented}"
+
+                             sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
+                             sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
+                             sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                             sh "cat config.xml | head"
+                          }
+
+                          echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
+                          echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+                        }
+
+                        stage ('generate android app code with Ionic Cordova') {
+                            sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+                            sh 'cordova plugin add cordova-plugin-device'
+                            sh 'cordova plugin add cordova-plugin-console'
+                            sh 'cordova plugin add cordova-plugin-whitelist'
+                            sh 'cordova plugin add cordova-plugin-splashscreen'
+                            sh 'cordova plugin add cordova-plugin-statusbar'
+                            sh 'cordova plugin add cordova-plugin-geolocation'
+                            sh 'cordova plugin add ionic-plugin-keyboard'
+                            sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
+                            sh 'cordova plugin add cordova-plugin-crosswalk-webview'
+                            sh 'cordova plugin add cordova-plugin-insomnia'
+                            sh 'cordova plugin add cordova-plugin-tts'
+                            sh 'cordova plugin add cordova-plugin-device-orientation'
+                            sh 'cordova plugin add cordova.plugins.diagnostic'
+                            sh 'cordova plugin add cordova-open-native-settings'
+                            sh 'cordova plugin add cordova-plugin-camera'
+                            sh 'cordova plugin add cordova-plugin-file'
+                            sh 'cordova plugin add cordova-plugin-add-swift-support'
+                            sh 'cordova plugin add cordova-plugin-photo-library'
+                            sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
+                            sh 'cordova plugin add cordova-custom-config --fetch '
+                        }
+
+                        stage ('build android with Cordova and Gradle') {
+                            sh 'ionic cordova build android --release'
+                        }
+                    }
+                }
+
+                withCredentials([
+                     [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
+                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
+                     [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
+                ]) {
+                   stage ('deploy android') {
+                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
+                   }
+                }
+
+                stage ('archive android') {
+                  archive "**/${APPNAME}-${target}.apk"
+                }
+            }
+        }
+    }
+
+    if ("${TO_GOOGLE_PLAY_BETA}" == "true") {
         stage ('git clone') {
             checkout scm
         }
@@ -210,51 +294,39 @@ node('macosx-1') {
                 [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
             ]) {
                 withEnv([
-                  "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
-                  "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
+                  "FRONT_SERVICE_URL=https://deverylight-prod.deveryware.team",
+                  "MQTT_SERVICE_URL=wss://deverylight-prod.deveryware.team/mqtt"
                 ]) {
-                    stage ('change config.xml for android') {
-                      if ("${TO_APPALOOSA}" == "true") {
-                         def versionNumberIncremented = getVersionNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}_${target}", "true")
-                         echo "versionNumberIncremented: ${versionNumberIncremented}"
+                   echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
+                   echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
 
-                         sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
-                         sh "sed \"s/${APPNAME}/${APPNAME}-${target}/g\" config.xml.tmp > config.xml.tmp2"
-                         sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${versionNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
-                         sh "cat config.xml | head"
-                      }
+                   stage ('generate android app code with Ionic Cordova') {
+                      sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+                      sh 'cordova plugin add cordova-plugin-device'
+                      sh 'cordova plugin add cordova-plugin-console'
+                      sh 'cordova plugin add cordova-plugin-whitelist'
+                      sh 'cordova plugin add cordova-plugin-splashscreen'
+                      sh 'cordova plugin add cordova-plugin-statusbar'
+                      sh 'cordova plugin add cordova-plugin-geolocation'
+                      sh 'cordova plugin add ionic-plugin-keyboard'
+                      sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
+                      sh 'cordova plugin add cordova-plugin-crosswalk-webview'
+                      sh 'cordova plugin add cordova-plugin-insomnia'
+                      sh 'cordova plugin add cordova-plugin-tts'
+                      sh 'cordova plugin add cordova-plugin-device-orientation'
+                      sh 'cordova plugin add cordova.plugins.diagnostic'
+                      sh 'cordova plugin add cordova-open-native-settings'
+                      sh 'cordova plugin add cordova-plugin-camera'
+                      sh 'cordova plugin add cordova-plugin-file'
+                      sh 'cordova plugin add cordova-plugin-add-swift-support'
+                      sh 'cordova plugin add cordova-plugin-photo-library'
+                      sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
+                      sh 'cordova plugin add cordova-custom-config --fetch '
+                   }
 
-                      echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
-                      echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
-                    }
-
-                    stage ('generate android app code with Ionic Cordova') {
-                        sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
-                        sh 'cordova plugin add cordova-plugin-device'
-                        sh 'cordova plugin add cordova-plugin-console'
-                        sh 'cordova plugin add cordova-plugin-whitelist'
-                        sh 'cordova plugin add cordova-plugin-splashscreen'
-                        sh 'cordova plugin add cordova-plugin-statusbar'
-                        sh 'cordova plugin add cordova-plugin-geolocation'
-                        sh 'cordova plugin add ionic-plugin-keyboard'
-                        sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
-                        sh 'cordova plugin add cordova-plugin-crosswalk-webview'
-                        sh 'cordova plugin add cordova-plugin-insomnia'
-                        sh 'cordova plugin add cordova-plugin-tts'
-                        sh 'cordova plugin add cordova-plugin-device-orientation'
-                        sh 'cordova plugin add cordova.plugins.diagnostic'
-                        sh 'cordova plugin add cordova-open-native-settings'
-                        sh 'cordova plugin add cordova-plugin-camera'
-                        sh 'cordova plugin add cordova-plugin-file'
-                        sh 'cordova plugin add cordova-plugin-add-swift-support'
-                        sh 'cordova plugin add cordova-plugin-photo-library'
-                        sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
-                        sh 'cordova plugin add cordova-custom-config --fetch '
-                    }
-
-                    stage ('build android with Cordova and Gradle') {
-                        sh 'ionic cordova build android --release'
-                    }
+                   stage ('build android with Cordova and Gradle') {
+                      sh 'ionic cordova build android --release'
+                   }
                 }
             }
 
@@ -264,15 +336,17 @@ node('macosx-1') {
                  [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
             ]) {
                stage ('deploy android') {
-                 sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME}-${target} app_identifier:${BUNDLEID}_${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS} to_appaloosa:${TO_APPALOOSA} to_testflight:${TO_TESTFLIGHT} to_google_play_beta:${TO_GOOGLE_PLAY_BETA}"
+                  sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:DlightPalier app_identifier:${BUNDLEID}"
                }
             }
 
             stage ('archive android') {
-              archive "**/deverylight-${env.PLATFORM}.apk"
+              archive "**/${APPNAME}.apk"
             }
         }
+
     }
+
 }
 
 
