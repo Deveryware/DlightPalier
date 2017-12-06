@@ -155,8 +155,8 @@ node('macosx-1') {
                     def build_number_incremented = build_number_itunesconnect.toInteger() + 1
                     echo "build_number_incremented: ${build_number_incremented}"
 
-                    sh "sed -i \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
-                    sh "cat config.xml | head"
+                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml > config.xml.tmp"
+                    sh "cat config.xml.tmp > config.xml"
 
 
                     stage ('generate ios app code with Ionic Cordova') {
