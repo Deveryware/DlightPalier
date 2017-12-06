@@ -66,16 +66,6 @@ node('macosx-1') {
               sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
             }
 
-            withCredentials([
-                [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
-            ]) {
-                sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 | grep Result: | cut -d \' \' -f3 > build_number_itunesconnect.txt'
-                build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
-                //def buildNumber = (build_number_itunesconnect =~ /Result: (.+)\^/)[ 0 ]​[ 1 ]
-                //def buildNumber = build_number_itunesconnect.replaceFirst( /.*&result(\w+).*/, '$1' )
-                echo "build_number_itunesconnect: ${build_number_itunesconnect}"
-            }
-
             dir("${MOBILE_DIRECTORY}") {
                 withCredentials([
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
@@ -134,6 +124,13 @@ node('macosx-1') {
           sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
         }
 
+
+        withCredentials([
+            [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
+        ]) {
+
+        }
+
         dir("${MOBILE_DIRECTORY}") {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
@@ -151,6 +148,15 @@ node('macosx-1') {
 
                     echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                     echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+
+                    sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 | grep Result: | cut -d \' \' -f3 > build_number_itunesconnect.txt'
+                    def build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
+                    def build_number_incremented = build_number_itunesconnect.toInteger() + 1
+                    echo "build_number_incremented: ${build_number_incremented}"
+
+                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                    sh "cat config.xml | head"
+
 
                     stage ('generate ios app code with Ionic Cordova') {
                         sh "npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
