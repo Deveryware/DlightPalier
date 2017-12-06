@@ -149,7 +149,7 @@ node('macosx-1') {
                     echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                     echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
 
-                    sh "cat config.xml | grep 'version=\"' | sed 's/.*version=\\"\\(.*\\)\\" xmlns=.*/\\1/' > version_number.txt"
+                    sh "cat config.xml | grep 'version=\"' | sed 's/.*version=\"\\(.*\\)\" xmlns=.*/\\1/' > version_number.txt"
                     def version_number = readFile('version_number.txt').trim()
                     echo "version_number: ${version_number}"
 
