@@ -70,8 +70,8 @@ node('macosx-1') {
                 [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
             ]) {
                 sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 > build_number_itunesconnect.txt'
-                result = readFile('build_number_itunesconnect.txt').trim()
-                def buildNumber = (str =~ "result:(.*)")[0][1]
+                build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
+                def buildNumber = (build_number_itunesconnect =~ "result:(.*)")[0][1]
                 echo "buildNumber: ${buildNumber}"
             }
 
