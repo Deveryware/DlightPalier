@@ -153,7 +153,7 @@ node('macosx-1') {
                     def version_number = readFile('version_number.txt').trim()
                     echo "version_number: ${version_number}"
 
-                    sh "~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_itunesconnect.txt"
+                    sh "~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:${version_number} | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_itunesconnect.txt"
                     def build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
                     echo "build_number_itunesconnect: ${build_number_itunesconnect}"
                     def build_number_incremented = build_number_itunesconnect.toInteger() + 1
