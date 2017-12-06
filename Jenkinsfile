@@ -69,11 +69,11 @@ node('macosx-1') {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
             ]) {
-                LAST_BUILD_NUMBER = sh (
-                    script: sh '/Users/jenkins/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1',
-                    returnStdout: true
-                ).trim()}
-                echo "LAST_BUILD_NUMBER: ${LAST_BUILD_NUMBER}"
+                sh '.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 > build_number_itunesconnect.txt'
+                result = readFile('build_number_itunesconnect.txt').trim()
+                echo "result: ${result}"
+            }
+
             dir("${MOBILE_DIRECTORY}") {
                 withCredentials([
                     [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
