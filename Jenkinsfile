@@ -69,11 +69,11 @@ node('macosx-1') {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
             ]) {
-                sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 > build_number_itunesconnect.txt'
+                sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 | grep Result: | cut -d ' ' -f3 > build_number_itunesconnect.txt'
                 build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
-                def buildNumber = (build_number_itunesconnect =~ /Result: (.+)\^/)[ 0 ]​[ 1 ]
+                //def buildNumber = (build_number_itunesconnect =~ /Result: (.+)\^/)[ 0 ]​[ 1 ]
                 //def buildNumber = build_number_itunesconnect.replaceFirst( /.*&result(\w+).*/, '$1' )
-                echo "buildNumber: ${buildNumber}"
+                echo "build_number_itunesconnect: ${build_number_itunesconnect}"
             }
 
             dir("${MOBILE_DIRECTORY}") {
