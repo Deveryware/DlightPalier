@@ -69,7 +69,8 @@ node('macosx-1') {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
             ]) {
-                sh '~/.rbenv/shims/bundle exec fastlane run app_store_build_number > build_number_itunesconnect.txt'
+                sh '/Users/jenkins/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1'
+
             }
 
             dir("${MOBILE_DIRECTORY}") {
