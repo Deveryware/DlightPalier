@@ -149,6 +149,10 @@ node('macosx-1') {
                     echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                     echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
 
+                    sh "cat config.xml | grep 'version=\"' | sed 's/.*version=\\"\\(.*\\)\\" xmlns=.*/\\1/' > version_number.txt"
+                    def version_number = readFile('version_number.txt').trim()
+                    echo "version_number: ${version_number}"
+
                     sh "~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_itunesconnect.txt"
                     def build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
                     echo "build_number_itunesconnect: ${build_number_itunesconnect}"
