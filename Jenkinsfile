@@ -155,7 +155,7 @@ node('macosx-1') {
                     def build_number_incremented = build_number_itunesconnect.toInteger() + 1
                     echo "build_number_incremented: ${build_number_incremented}"
 
-                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml > config.xml"
+                    sh "sed -i \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
                     sh "cat config.xml | head"
 
 
