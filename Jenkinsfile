@@ -28,11 +28,6 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
 
 node('macosx-1') {
 
-    withCredentials([
-        [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
-    ]) {
-        sh '~/.rbenv/shims/bundle exec fastlane run app_store_build_number > build_number_itunesconnect.txt'
-    }
 
     env.LC_CTYPE = 'en_US.UTF-8'
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
@@ -69,6 +64,12 @@ node('macosx-1') {
 
             stage ('update install gems') {
               sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
+            }
+
+            withCredentials([
+                [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD']
+            ]) {
+                sh '~/.rbenv/shims/bundle exec fastlane run app_store_build_number > build_number_itunesconnect.txt'
             }
 
             dir("${MOBILE_DIRECTORY}") {
