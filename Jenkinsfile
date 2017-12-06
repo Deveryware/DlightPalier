@@ -151,6 +151,8 @@ node('macosx-1') {
 
                     sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 | grep Result: | cut -d \' \' -f3 > build_number_itunesconnect.txt'
                     def build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
+                    echo "build_number_itunesconnect: ${build_number_itunesconnect}"
+                    echo "build_number_itunesconnecttirmed: ${build_number_itunesconnect}.trim()"
                     def build_number_incremented = build_number_itunesconnect.toInteger() + 1
                     echo "build_number_incremented: ${build_number_incremented}"
 
