@@ -71,8 +71,8 @@ node('macosx-1') {
             ]) {
                 sh '~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:0.0.1 > build_number_itunesconnect.txt'
                 build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
-                //def buildNumber = (build_number_itunesconnect =~ "result:(.*)")[0][1]
-                def buildNumber = build_number_itunesconnect.replaceFirst( /.*&result(\w+).*/, '$1' )
+                def buildNumber = (build_number_itunesconnect =~ /Result: (.+)\^.*/)[ 0 ]​[ 1 ]
+                //def buildNumber = build_number_itunesconnect.replaceFirst( /.*&result(\w+).*/, '$1' )
                 echo "buildNumber: ${buildNumber}"
             }
 
