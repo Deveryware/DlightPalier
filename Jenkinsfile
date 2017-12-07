@@ -158,8 +158,6 @@ node('macosx-1') {
         }
 
 
-
-
         dir("${MOBILE_DIRECTORY}") {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
@@ -173,6 +171,16 @@ node('macosx-1') {
                 ]) {
                    echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
                    echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+
+                   sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:com.deveryware.deverylight track:beta  | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
+                   def build_number_google_play = readFile('build_number_google_play.txt').trim()
+                   echo "build_number_google_play: ${build_number_google_play}"
+                   def build_number_incremented = build_number_google_play.toInteger() + 1
+                   echo "build_number_incremented: ${build_number_incremented}"
+
+                   sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml > config.xml.tmp"
+                   sh "cat config.xml.tmp > config.xml"
+
 
                    stage ('generate android app code with Ionic Cordova') {
                       sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
