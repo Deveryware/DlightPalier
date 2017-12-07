@@ -148,6 +148,18 @@ node('macosx-1') {
           sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
         }
 
+
+        withCredentials([
+             [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH']
+        ]) {
+           stage ('deploy android') {
+              sh '~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:com.deveryware.deverylight track:beta'
+           }
+        }
+
+
+
+
         dir("${MOBILE_DIRECTORY}") {
             withCredentials([
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
