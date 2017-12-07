@@ -163,7 +163,8 @@ node('macosx-1') {
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                 [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
                 [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
-                [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
+                [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID'],
+                [$class: 'FileBinding', credentialsId: 'GOOGLE_PLAYSTORE_JSON', variable: 'SUPPLY_JSON_KEY']
             ]) {
                 withEnv([
                   "FRONT_SERVICE_URL=https://deverylight-prod.deveryware.team",
