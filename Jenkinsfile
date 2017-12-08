@@ -94,6 +94,8 @@ node('macosx-1') {
 
             stage ("android - target: ${target} - store: ${store}") {
 
+                echo "### ANDROID - target: ${target} - store: ${store} ###"
+
                 checkout scm
                 sh "~/.rbenv/bin/rbenv install -s && ~/.rbenv/bin/rbenv rehash && ~/.rbenv/shims/gem install bundler"
                 sh "~/.rbenv/shims/bundle update && ~/.rbenv/shims/bundle install --path .gem"
@@ -115,7 +117,7 @@ node('macosx-1') {
 
                             switch (store) {
                                 case "to_appaloosa":
-                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME}", "${BUNDLEID}_${target}", "true")
+                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME_DEV}", "${BUNDLEID}_${target}", "true")
                                     sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
                                     sh "sed \"s/${APPNAME_DEV}/${APPNAME_DEV}-${target}/g\" config.xml.tmp > config.xml.tmp2"
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${buildNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
@@ -166,16 +168,18 @@ node('macosx-1') {
                         switch (store) {
                             case "to_appaloosa":
                                 sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME_DEV}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
+                                archive "**/${APPNAME_DEV}-${target}.apk"
                                 break
                             case "to_google_play_beta":
-                                sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:${APPNAME}"
+                                sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:${APPNAME_STORE}"
+                                archive "**/${APPNAME_STORE}-${target}.apk"
                                 break
                             default:
                                 break
                         }
                     }
 
-                    archive "**/${APPNAME}-${target}.apk"
+
                 }
             }
         }
