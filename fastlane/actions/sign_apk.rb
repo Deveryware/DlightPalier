@@ -27,7 +27,7 @@ module Fastlane
         Actions.lane_context[SharedValues::SIGNED_APK_PATH] = "#{params[:apk_path].gsub('-unsigned', '')}"
       end
 
-      Fastlane::Actions.sh(sign_cmd, log: true)
+      Fastlane::Actions.sh(sign_cmd.join(" "), log: true)
     end
 
       #####################################################
