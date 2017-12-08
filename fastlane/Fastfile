@@ -69,7 +69,7 @@ platform :android do
       aligned_apk_path: "platforms/android/build/outputs/apk/#{options[:app]}.apk"
     )
 
-    supply(apk: "platforms/android/build/outputs/apk/#{options[:build]}.apk", track: "beta")
+    supply(apk: "platforms/android/build/outputs/apk/#{options[:app]}.apk", track: "beta")
 
   end
 
