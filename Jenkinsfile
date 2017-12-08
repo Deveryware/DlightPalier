@@ -27,8 +27,8 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
 
 node('macosx-1') {
 
-    export LC_ALL='en_US.UTF-8'
-    export LANG='en_US.UTF-8'
+    env.LC_ALL='en_US.UTF-8'
+    env.LANG='en_US.UTF-8'
     env.LC_CTYPE = 'en_US.UTF-8'
 
     def targets = []
@@ -244,8 +244,8 @@ node('macosx-1') {
 
 node('macosx-1') {
 
-    export LC_ALL='en_US.UTF-8'
-    export LANG='en_US.UTF-8'
+    env.LC_ALL='en_US.UTF-8'
+    env.LANG='en_US.UTF-8'
     env.LC_CTYPE = 'en_US.UTF-8'
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
