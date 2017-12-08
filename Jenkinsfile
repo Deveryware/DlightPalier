@@ -178,7 +178,7 @@ node('macosx-1') {
                    echo "build_number_google_play: ${build_number_google_play}"
 
                    if ("${build_number_google_play}" == "") {
-                      build_number_google_play = 1
+                      def build_number_incremented = 1
                    } else {
                       def build_number_incremented = build_number_google_play.toInteger() + 1
                    }
