@@ -177,10 +177,10 @@ node('macosx-1') {
                    def build_number_google_play = readFile('build_number_google_play.txt').trim()
                    echo "build_number_google_play: ${build_number_google_play}"
 
-                   if ("${build_number_google_play}" == "") {
-                      def build_number_incremented = 1
-                   } else {
-                      def build_number_incremented = build_number_google_play.toInteger() + 1
+                   def build_number_incremented = 1
+
+                   if ("${build_number_google_play}" != "") {
+                      build_number_incremented = build_number_google_play.toInteger() + 1
                    }
 
                    echo "build_number_incremented: ${build_number_incremented}"
