@@ -27,6 +27,8 @@ def getVersionNumberIncremented(def storeId, def apiKey, def groupName, def appl
 
 node('macosx-1') {
 
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
     env.LC_CTYPE = 'en_US.UTF-8'
 
     def targets = []
@@ -153,7 +155,7 @@ node('macosx-1') {
             [$class: 'FileBinding', credentialsId: 'GOOGLE_PLAYSTORE_JSON', variable: 'SUPPLY_JSON_KEY']
         ]) {
            stage ('deploy android') {
-              sh '~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:com.deveryware.deverylight track:beta > a.txt'
+              sh '~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:${BUNDLEID} track:beta > a.txt'
            }
         }
 
@@ -242,7 +244,8 @@ node('macosx-1') {
 
 node('macosx-1') {
 
-
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
     env.LC_CTYPE = 'en_US.UTF-8'
     env.FL_UNLOCK_KEYCHAIN_PATH = "~/Library/Keychains/jenkins.keychain"
     env.FASTLANE_XCODE_LIST_TIMEOUT = 120
