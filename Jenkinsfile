@@ -172,7 +172,7 @@ node('macosx-1') {
                                 break
                             case "to_google_play_beta":
                                 sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:${APPNAME_STORE}"
-                                archive "**/${APPNAME_STORE}-${target}.apk"
+                                archive "**/${APPNAME_STORE}.apk"
                                 break
                             default:
                                 break
