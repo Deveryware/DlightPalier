@@ -153,7 +153,7 @@ node('macosx-1') {
             [$class: 'FileBinding', credentialsId: 'GOOGLE_PLAYSTORE_JSON', variable: 'SUPPLY_JSON_KEY']
         ]) {
            stage ('deploy android') {
-              sh '~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:com.deveryware.deverylight track:beta'
+              sh '~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:com.deveryware.deverylight track:beta > a.txt'
            }
         }
 
