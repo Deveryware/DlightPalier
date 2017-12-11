@@ -27,10 +27,8 @@ def getTestFlightBuildNumberIncremented(def applicationId, def version) {
 
     sh "~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:${version} | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_itunesconnect.txt"
     def build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
-    echo "build_number_itunesconnect: ${build_number_itunesconnect}"
     if (build_number_itunesconnect?.trim()) {
         def build_number_incremented = build_number_itunesconnect.toInteger() + 1
-        echo "build_number_incremented: ${build_number_incremented}"
         return build_number_incremented
     }
     return 1
@@ -143,7 +141,6 @@ node('macosx-1') {
                                 case "to_testflight":
                                     sh "cat config.xml | grep 'version=\"' | sed 's/.*version=\"\\(.*\\)\" xmlns=.*/\\1/' > version_number.txt"
                                     def version_number = readFile('version_number.txt').trim()
-                                    echo "version_number: ${version_number}"
 
                                     def build_number_incremented = getTestFlightBuildNumberIncremented("${BUNDLEID}", "${version_number}")
 
@@ -332,23 +329,8 @@ node('macosx-1') {
                                 break
                         }
                     }
-
-
                 }
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
