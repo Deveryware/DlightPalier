@@ -92,7 +92,7 @@ node('macosx-1') {
 
         for (target in targets) {
 
-            stage ("android - target: ${target} - store: ${store}") {
+            stage ("ANDROID: ${target} - ${store}") {
 
                 echo "### ANDROID - target: ${target} - store: ${store} ###"
 
