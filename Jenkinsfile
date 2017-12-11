@@ -59,7 +59,7 @@ node('macosx-1') {
 
     def stores = []
 
-    if (to_appaloosa) {
+    if (to_appaloosa == "true") {
         stores.add('to_appaloosa')
     }
 
