@@ -5,6 +5,7 @@ env.APPNAME_STORE = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
 env.APPALOOSA_GROUP_IDS = '16136'
 env.MOBILE_DIRECTORY = '.'
+def TO_APPALOOSA = ${TO_APPALOOSA}
 
 @NonCPS
 def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
@@ -57,12 +58,8 @@ node('macosx-1') {
 
     def stores = []
 
-    try {
-        if ("${TO_APPALOOSA}" == "true") {
-            stores.add('to_appaloosa')
-        }
-    } catch (MissingPropertyException e) {
-        println 'TO_APPALOOSA is not defined'
+    if (TO_APPALOOSA) {
+        stores.add('to_appaloosa')
     }
 
     try {
