@@ -1,11 +1,12 @@
 import groovy.json.JsonSlurperClassic
 
-env.APPNAME_DEV = 'DlightPalier'
-env.APPNAME_STORE = 'DlightPalier'
-env.BUNDLEID = 'com.deveryware.dlightpalier'
-env.APPALOOSA_GROUP_IDS = '16136'
+def APPNAME_DEV = 'DlightPalier'
+def APPNAME_STORE = 'DlightPalier'
+def BUNDLEID = 'com.deveryware.dlightpalier'
+def APPALOOSA_GROUP_IDS = '16136'
 env.MOBILE_DIRECTORY = '.'
-def TO_APPALOOSA = "${TO_APPALOOSA}"
+
+def to_appaloosa = "${TO_APPALOOSA}"
 
 @NonCPS
 def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
@@ -58,7 +59,7 @@ node('macosx-1') {
 
     def stores = []
 
-    if (TO_APPALOOSA) {
+    if (to_appaloosa) {
         stores.add('to_appaloosa')
     }
 
