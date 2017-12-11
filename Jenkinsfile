@@ -5,7 +5,7 @@ env.APPNAME_STORE = 'DlightPalier'
 env.BUNDLEID = 'com.deveryware.dlightpalier'
 env.APPALOOSA_GROUP_IDS = '16136'
 env.MOBILE_DIRECTORY = '.'
-def TO_APPALOOSA = ${TO_APPALOOSA}
+def TO_APPALOOSA = "${TO_APPALOOSA}"
 
 @NonCPS
 def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
