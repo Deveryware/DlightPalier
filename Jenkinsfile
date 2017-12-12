@@ -291,11 +291,11 @@ node('macosx-1') {
                         switch (store) {
                             case "to_appaloosa":
                                 sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
-                                archive "**/$APPNAME_DEV-$target.apk"
+                                archive "**/${APPNAME_DEV}-${target}.apk"
                                 break
                             case "to_google_play_beta":
                                 sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:$APPNAME_STORE"
-                                archive "**/$APPNAME_STORE.apk"
+                                archive "**/${APPNAME_STORE}.apk"
                                 break
                             default:
                                 break
