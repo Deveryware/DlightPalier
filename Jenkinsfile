@@ -125,48 +125,27 @@ node('macosx-1') {
                                     sh "sed \"s/$BUNDLEID/$BUNDLEID-$target/g\" config.xml > config.xml.tmp"
                                     sh "sed \"s/$APPNAME_DEV/$APPNAME_DEV-$target/g\" config.xml.tmp > config.xml.tmp2"
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                                    sh "cat config.xml | head"
+                                    sh "npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
+                                    sh "~/.rbenv/shims/bundle exec fastlane ios to_appaloosa app:$APPNAME_DEV-$target app_identifier:$BUNDLEID-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
+                                    archive '**/${APPNAME}-${target}.ipa'
                                     break
                                 case "to_testflight":
                                     sh "cat config.xml | grep 'version=\"' | sed 's/.*version=\"\\(.*\\)\" xmlns=.*/\\1/' > version_number.txt"
                                     def version_number = readFile('version_number.txt').trim()
-
                                     def build_number_incremented = getTestFlightBuildNumberIncremented(BUNDLEID, version_number)
-
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"$build_number_incremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml > config.xml.tmp"
                                     sh "cat config.xml.tmp > config.xml"
-
+                                    sh "cat config.xml | head"
+                                    sh "npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
+                                    sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:$APPNAME_STORE app_identifier:$BUNDLEID"
+                                    archive '**/${APPNAME_STORE}.ipa'
                                     break
                                 default:
                                     break
                             }
-
-                            sh "cat config.xml | head"
-
-                            sh "npm install && npm install cordova-custom-config && ionic cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY && ionic cordova platform add ios && ionic cordova prepare ios"
                         }
                     }
-
-                    withCredentials([
-                        [$class: 'StringBinding', credentialsId: 'ITUNES_PASSWORD', variable: 'FASTLANE_PASSWORD'],
-                        [$class: 'StringBinding', credentialsId: 'KEYCHAIN_PASSWORD', variable: 'FL_UNLOCK_KEYCHAIN_PASSWORD'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
-                    ]) {
-                        switch (store) {
-                            case "to_appaloosa":
-                                sh "~/.rbenv/shims/bundle exec fastlane ios to_appaloosa app:$APPNAME_DEV-$target app_identifier:$BUNDLEID-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
-                                archive '**/${APPNAME}-${target}.ipa'
-                                break
-                            case "to_testflight":
-                                sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:$APPNAME_STORE app_identifier:$BUNDLEID"
-                                archive '**/${APPNAME_STORE}.ipa'
-                                break
-                            default:
-                                break
-                        }
-                    }
-
-
                 }
             }
         }
