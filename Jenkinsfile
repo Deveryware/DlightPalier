@@ -204,10 +204,12 @@ node('macosx-1') {
 
                 dir("${MOBILE_DIRECTORY}") {
                     withCredentials([
+                        [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
                         [$class: 'StringBinding', credentialsId: 'FABRIC_API_SECRET', variable: 'FABRIC_API_SECRET'],
                         [$class: 'StringBinding', credentialsId: 'FABRIC_API_KEY', variable: 'FABRIC_API_KEY'],
                         [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
+                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID'],
+                        [$class: 'FileBinding', credentialsId: 'GOOGLE_PLAYSTORE_JSON', variable: 'SUPPLY_JSON_KEY']
                     ]) {
                         withEnv([
                             "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
@@ -223,61 +225,67 @@ node('macosx-1') {
                                     sh "sed \"s/$BUNDLEID/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
                                     sh "sed \"s/$APPNAME_DEV/$APPNAME_DEV-$target/g\" config.xml.tmp > config.xml.tmp2"
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                                    sh "cat config.xml | head"
+
+                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+                                    sh 'cordova plugin add cordova-plugin-device'
+                                    sh 'cordova plugin add cordova-plugin-console'
+                                    sh 'cordova plugin add cordova-plugin-whitelist'
+                                    sh 'cordova plugin add cordova-plugin-splashscreen'
+                                    sh 'cordova plugin add cordova-plugin-statusbar'
+                                    sh 'cordova plugin add cordova-plugin-geolocation'
+                                    sh 'cordova plugin add ionic-plugin-keyboard'
+                                    sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
+                                    sh 'cordova plugin add cordova-plugin-crosswalk-webview'
+                                    sh 'cordova plugin add cordova-plugin-insomnia'
+                                    sh 'cordova plugin add cordova-plugin-tts'
+                                    sh 'cordova plugin add cordova-plugin-device-orientation'
+                                    sh 'cordova plugin add cordova.plugins.diagnostic'
+                                    sh 'cordova plugin add cordova-open-native-settings'
+                                    sh 'cordova plugin add cordova-plugin-camera'
+                                    sh 'cordova plugin add cordova-plugin-file'
+                                    sh 'cordova plugin add cordova-plugin-add-swift-support'
+                                    sh 'cordova plugin add cordova-plugin-photo-library'
+                                    sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
+                                    sh 'cordova plugin add cordova-custom-config --fetch '
+                                    sh 'ionic cordova build android --release'
+
+                                    sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
+                                    archive "**/${APPNAME_DEV}-${target}.apk"
                                     break
                                 case "to_google_play_beta":
                                     def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
+
+                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+                                    sh 'cordova plugin add cordova-plugin-device'
+                                    sh 'cordova plugin add cordova-plugin-console'
+                                    sh 'cordova plugin add cordova-plugin-whitelist'
+                                    sh 'cordova plugin add cordova-plugin-splashscreen'
+                                    sh 'cordova plugin add cordova-plugin-statusbar'
+                                    sh 'cordova plugin add cordova-plugin-geolocation'
+                                    sh 'cordova plugin add ionic-plugin-keyboard'
+                                    sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
+                                    sh 'cordova plugin add cordova-plugin-crosswalk-webview'
+                                    sh 'cordova plugin add cordova-plugin-insomnia'
+                                    sh 'cordova plugin add cordova-plugin-tts'
+                                    sh 'cordova plugin add cordova-plugin-device-orientation'
+                                    sh 'cordova plugin add cordova.plugins.diagnostic'
+                                    sh 'cordova plugin add cordova-open-native-settings'
+                                    sh 'cordova plugin add cordova-plugin-camera'
+                                    sh 'cordova plugin add cordova-plugin-file'
+                                    sh 'cordova plugin add cordova-plugin-add-swift-support'
+                                    sh 'cordova plugin add cordova-plugin-photo-library'
+                                    sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
+                                    sh 'cordova plugin add cordova-custom-config --fetch '
+                                    sh 'ionic cordova build android --release'
+
+                                    sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:$APPNAME_STORE"
+                                    archive "**/${APPNAME_STORE}.apk"
                                     break
                                 default:
                                     break
                             }
-                            sh "cat config.xml | head"
-
-                            sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
-                            sh 'cordova plugin add cordova-plugin-device'
-                            sh 'cordova plugin add cordova-plugin-console'
-                            sh 'cordova plugin add cordova-plugin-whitelist'
-                            sh 'cordova plugin add cordova-plugin-splashscreen'
-                            sh 'cordova plugin add cordova-plugin-statusbar'
-                            sh 'cordova plugin add cordova-plugin-geolocation'
-                            sh 'cordova plugin add ionic-plugin-keyboard'
-                            sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
-                            sh 'cordova plugin add cordova-plugin-crosswalk-webview'
-                            sh 'cordova plugin add cordova-plugin-insomnia'
-                            sh 'cordova plugin add cordova-plugin-tts'
-                            sh 'cordova plugin add cordova-plugin-device-orientation'
-                            sh 'cordova plugin add cordova.plugins.diagnostic'
-                            sh 'cordova plugin add cordova-open-native-settings'
-                            sh 'cordova plugin add cordova-plugin-camera'
-                            sh 'cordova plugin add cordova-plugin-file'
-                            sh 'cordova plugin add cordova-plugin-add-swift-support'
-                            sh 'cordova plugin add cordova-plugin-photo-library'
-                            sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
-                            sh 'cordova plugin add cordova-custom-config --fetch '
-
-                            sh 'ionic cordova build android --release'
-                        }
-                    }
-
-                    withCredentials([
-                        [$class: 'FileBinding', credentialsId: 'KEYSTORE_DEVERYWARE', variable: 'KEYSTORE_PATH'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_API_TOKEN', variable: 'FL_APPALOOSA_API_TOKEN'],
-                        [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID'],
-                        [$class: 'FileBinding', credentialsId: 'GOOGLE_PLAYSTORE_JSON', variable: 'SUPPLY_JSON_KEY']
-
-                    ]) {
-
-                        switch (store) {
-                            case "to_appaloosa":
-                                sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
-                                archive "**/${APPNAME_DEV}-${target}.apk"
-                                break
-                            case "to_google_play_beta":
-                                sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:$APPNAME_STORE"
-                                archive "**/${APPNAME_STORE}.apk"
-                                break
-                            default:
-                                break
                         }
                     }
                 }
