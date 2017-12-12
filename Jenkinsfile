@@ -241,7 +241,7 @@ node('macosx-1') {
                             switch (store) {
                                 case "to_appaloosa":
                                     def buildNumberIncremented = getAppaloosaBuildNumberIncremented(FL_APPALOOSA_STORE_ID, FL_APPALOOSA_API_TOKEN, APPNAME_DEV, "${BUNDLEID}_${target}", "true")
-                                    sh "sed \"s/$BUNDLEID/$BUNDLEID_$target/g\" config.xml > config.xml.tmp"
+                                    sh "sed \"s/$BUNDLEID/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
                                     sh "sed \"s/$APPNAME_DEV/$APPNAME_DEV-$target/g\" config.xml.tmp > config.xml.tmp2"
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                                     break
