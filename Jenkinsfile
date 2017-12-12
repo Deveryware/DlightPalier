@@ -155,11 +155,11 @@ node('macosx-1') {
                         switch (store) {
                             case "to_appaloosa":
                                 sh "~/.rbenv/shims/bundle exec fastlane ios to_appaloosa app:$APPNAME_DEV-$target app_identifier:$BUNDLEID-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
-                                archive '**/$APPNAME-$target.ipa'
+                                archive '**/${APPNAME}-${target}.ipa'
                                 break
                             case "to_testflight":
                                 sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:$APPNAME_STORE app_identifier:$BUNDLEID"
-                                archive '**/$APPNAME_STORE.ipa'
+                                archive '**/${APPNAME_STORE}.ipa'
                                 break
                             default:
                                 break
@@ -231,8 +231,8 @@ node('macosx-1') {
                         [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                     ]) {
                         withEnv([
-                            "FRONT_SERVICE_URL=https://deverylight-$target.deveryware.team",
-                            "MQTT_SERVICE_URL=wss://deverylight-$target.deveryware.team/mqtt"
+                            "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
+                            "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
                         ]) {
 
                             echo "FRONT_SERVICE_URL => $FRONT_SERVICE_URL"
@@ -240,7 +240,7 @@ node('macosx-1') {
 
                             switch (store) {
                                 case "to_appaloosa":
-                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented(FL_APPALOOSA_STORE_ID, FL_APPALOOSA_API_TOKEN, APPNAME_DEV, "$BUNDLEID_$target", "true")
+                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented(FL_APPALOOSA_STORE_ID, FL_APPALOOSA_API_TOKEN, APPNAME_DEV, "${BUNDLEID}_${target}", "true")
                                     sh "sed \"s/$BUNDLEID/$BUNDLEID_$target/g\" config.xml > config.xml.tmp"
                                     sh "sed \"s/$APPNAME_DEV/$APPNAME_DEV-$target/g\" config.xml.tmp > config.xml.tmp2"
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
