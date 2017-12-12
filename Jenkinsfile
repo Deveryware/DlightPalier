@@ -4,18 +4,22 @@ def APPNAME_DEV = 'DlightPalier'
 def APPNAME_STORE = 'DlightPalier'
 def BUNDLEID = 'com.deveryware.dlightpalier'
 def APPALOOSA_GROUP_IDS = '16136'
-env.MOBILE_DIRECTORY = '.'
+def MOBILE_DIRECTORY = '.'
 
-def to_appaloosa = "${TO_APPALOOSA}"
+def TARGET_PREPROD = "${TARGET_PREPROD}"
+def TARGET_SNAPSHOT = "${TARGET_SNAPSHOT}"
+def TO_APPALOOSA = "${TO_APPALOOSA}"
+def TO_TESTFLIGHT = "${TO_TESTFLIGHT}"
+def TO_GOOGLE_PLAY_BETA = "${TO_GOOGLE_PLAY_BETA}"
 
 @NonCPS
 def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
-    URL apiUrl = "https://www.appaloosa-store.com/api/v2/${storeId}/mobile_application_updates?api_key=${apiKey}&group_name=${groupName}".toURL()
+    URL apiUrl = "https://www.appaloosa-store.com/api/v2/$storeId/mobile_application_updates?api_key=$apiKey&group_name=$groupName".toURL()
     def json = new groovy.json.JsonSlurperClassic().parse(apiUrl.newReader())
         for (def val:json['mobile_application_updates']) {
         if (val['application_id'] == applicationId) {
           def existingBuildNumber = val['version']
-          if ("${android}" == "true") {
+          if (android == "true") {
             def existingBuildNumberTruncated = existingBuildNumber.substring(0, existingBuildNumber.length() - 1)
             return existingBuildNumberTruncated.toInteger() + 1
           }
@@ -27,7 +31,7 @@ def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, d
 
 def getTestFlightBuildNumberIncremented(def applicationId, def version) {
 
-    sh "~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:${version} | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_itunesconnect.txt"
+    sh "~/.rbenv/shims/bundle exec fastlane run latest_testflight_build_number version:$version | grep 'Result: ' | sed 's/.*Result: \\([0-9]*\\).*/\\1/' > build_number_itunesconnect.txt"
     def build_number_itunesconnect = readFile('build_number_itunesconnect.txt').trim()
     if (build_number_itunesconnect?.trim()) {
         def build_number_incremented = build_number_itunesconnect.toInteger() + 1
@@ -37,7 +41,7 @@ def getTestFlightBuildNumberIncremented(def applicationId, def version) {
 }
 
 def getGooglePlayBuildNumberIncremented(def applicationId) {
-    sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:${applicationId} track:beta  | grep 'Result: ' | sed 's/.*Result: \\[\\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
+    sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:$applicationId track:beta  | grep 'Result: ' | sed 's/.*Result: \\[\\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
     def build_number_google_play = readFile('build_number_google_play.txt').trim()
     if (build_number_google_play?.trim()) {
         def existingBuildNumberTruncated = build_number_google_play.substring(0, build_number_google_play.length() - 1)
@@ -59,16 +63,12 @@ node('macosx-1') {
 
     def stores = []
 
-    if (to_appaloosa == "true") {
+    if (TO_APPALOOSA == "true") {
         stores.add('to_appaloosa')
     }
 
-    try {
-        if ("${TO_TESTFLIGHT}" == "true") {
-            stores.add('to_testflight')
-        }
-    } catch (MissingPropertyException e) {
-        println 'TO_TESTFLIGHT is not defined'
+    if (TO_TESTFLIGHT == "true") {
+        stores.add('to_testflight')
     }
 
     for (store in stores) {
@@ -77,20 +77,12 @@ node('macosx-1') {
 
         switch (store) {
             case "to_appaloosa":
-                try {
-                    if ("${TARGET_PREPROD}" == "true") {
-                        targets.add('preprod')
-                    }
-                } catch (MissingPropertyException e) {
-                    println 'TARGET_PREPROD is not defined'
+                if (TARGET_PREPROD == "true") {
+                    targets.add('preprod')
                 }
 
-                try {
-                    if ("${TARGET_SNAPSHOT}" == "true") {
-                        targets.add('snapshot')
-                    }
-                } catch (MissingPropertyException e) {
-                    println 'TARGET_SNAPSHOT is not defined'
+                if (TARGET_SNAPSHOT == "true") {
+                    targets.add('snapshot')
                 }
                 break
             case "to_testflight":
@@ -104,7 +96,7 @@ node('macosx-1') {
 
             stage ("iOS: $target - $store") {
 
-                echo "### iOS - target: ${target} - store: ${store} ###"
+                echo "### iOS $target $store ###"
 
                 checkout scm
                 sh "~/.rbenv/bin/rbenv install -s && ~/.rbenv/bin/rbenv rehash && ~/.rbenv/shims/gem install bundler"
@@ -122,27 +114,27 @@ node('macosx-1') {
 
                     ]) {
                         withEnv([
-                            "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
-                            "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
+                            "FRONT_SERVICE_URL=https://deverylight-$target.deveryware.team",
+                            "MQTT_SERVICE_URL=wss://deverylight-$target.deveryware.team/mqtt"
                         ]) {
 
-                            echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
-                            echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+                            echo "FRONT_SERVICE_URL => $FRONT_SERVICE_URL"
+                            echo "MQTT_SERVICE_URL => $MQTT_SERVICE_URL"
 
                             switch (store) {
                                 case "to_appaloosa":
-                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME_DEV}", "${BUNDLEID}-${target}", false)
-                                    sh "sed \"s/${BUNDLEID}/${BUNDLEID}-${target}/g\" config.xml > config.xml.tmp"
-                                    sh "sed \"s/${APPNAME_DEV}/${APPNAME_DEV}-${target}/g\" config.xml.tmp > config.xml.tmp2"
-                                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${buildNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented(FL_APPALOOSA_STORE_ID, FL_APPALOOSA_API_TOKEN, APPNAME_DEV, "${BUNDLEID}-${target}", false)
+                                    sh "sed \"s/$BUNDLEID/$BUNDLEID-$target/g\" config.xml > config.xml.tmp"
+                                    sh "sed \"s/$APPNAME_DEV/$APPNAME_DEV-$target/g\" config.xml.tmp > config.xml.tmp2"
+                                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                                     break
                                 case "to_testflight":
                                     sh "cat config.xml | grep 'version=\"' | sed 's/.*version=\"\\(.*\\)\" xmlns=.*/\\1/' > version_number.txt"
                                     def version_number = readFile('version_number.txt').trim()
 
-                                    def build_number_incremented = getTestFlightBuildNumberIncremented("${BUNDLEID}", "${version_number}")
+                                    def build_number_incremented = getTestFlightBuildNumberIncremented(BUNDLEID, version_number)
 
-                                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"${build_number_incremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml > config.xml.tmp"
+                                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/ios-CFBundleVersion=\\\"$build_number_incremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml > config.xml.tmp"
                                     sh "cat config.xml.tmp > config.xml"
 
                                     break
@@ -164,12 +156,12 @@ node('macosx-1') {
                     ]) {
                         switch (store) {
                             case "to_appaloosa":
-                                sh "~/.rbenv/shims/bundle exec fastlane ios to_appaloosa app:${APPNAME_DEV}-${target} app_identifier:${BUNDLEID}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
-                                archive '**/${APPNAME}-${target}.ipa'
+                                sh "~/.rbenv/shims/bundle exec fastlane ios to_appaloosa app:$APPNAME_DEV-$target app_identifier:$BUNDLEID-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
+                                archive '**/$APPNAME-$target.ipa'
                                 break
                             case "to_testflight":
-                                sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:${APPNAME_STORE} app_identifier:${BUNDLEID}"
-                                archive '**/${APPNAME_STORE}.ipa'
+                                sh "~/.rbenv/shims/bundle exec fastlane ios to_testflight app:$APPNAME_STORE app_identifier:$BUNDLEID"
+                                archive '**/$APPNAME_STORE.ipa'
                                 break
                             default:
                                 break
@@ -194,20 +186,12 @@ node('macosx-1') {
 
     def stores = []
 
-    try {
-        if ("${TO_APPALOOSA}" == "true") {
-            stores.add('to_appaloosa')
-        }
-    } catch (MissingPropertyException e) {
-        println 'TO_APPALOOSA is not defined'
+    if (TO_APPALOOSA == "true") {
+        stores.add('to_appaloosa')
     }
 
-    try {
-        if ("${TO_GOOGLE_PLAY_BETA}" == "true") {
-            stores.add('to_google_play_beta')
-        }
-    } catch (MissingPropertyException e) {
-        println 'TO_GOOGLE_PLAY_BETA is not defined'
+    if (TO_GOOGLE_PLAY_BETA == "true") {
+        stores.add('to_google_play_beta')
     }
 
     for (store in stores) {
@@ -216,20 +200,12 @@ node('macosx-1') {
 
         switch (store) {
             case "to_appaloosa":
-                try {
-                    if ("${TARGET_PREPROD}" == "true") {
-                        targets.add('preprod')
-                    }
-                } catch (MissingPropertyException e) {
-                    println 'TARGET_PREPROD is not defined'
+                if (TARGET_PREPROD == "true") {
+                    targets.add('preprod')
                 }
 
-                try {
-                    if ("${TARGET_SNAPSHOT}" == "true") {
-                        targets.add('snapshot')
-                    }
-                } catch (MissingPropertyException e) {
-                    println 'TARGET_SNAPSHOT is not defined'
+                if ("${TARGET_SNAPSHOT}" == "true") {
+                    targets.add('snapshot')
                 }
                 break
             case "to_google_play_beta":
@@ -241,9 +217,9 @@ node('macosx-1') {
 
         for (target in targets) {
 
-            stage ("ANDROID: ${target} - ${store}") {
+            stage ("ANDROID: $target - $store") {
 
-                echo "### ANDROID - target: ${target} - store: ${store} ###"
+                echo "### ANDROID $target $store ###"
 
                 checkout scm
                 sh "~/.rbenv/bin/rbenv install -s && ~/.rbenv/bin/rbenv rehash && ~/.rbenv/shims/gem install bundler"
@@ -257,23 +233,23 @@ node('macosx-1') {
                         [$class: 'StringBinding', credentialsId: 'APPALOOSA_STORE_ID', variable: 'FL_APPALOOSA_STORE_ID']
                     ]) {
                         withEnv([
-                            "FRONT_SERVICE_URL=https://deverylight-${target}.deveryware.team",
-                            "MQTT_SERVICE_URL=wss://deverylight-${target}.deveryware.team/mqtt"
+                            "FRONT_SERVICE_URL=https://deverylight-$target.deveryware.team",
+                            "MQTT_SERVICE_URL=wss://deverylight-$target.deveryware.team/mqtt"
                         ]) {
 
-                            echo "FRONT_SERVICE_URL => ${FRONT_SERVICE_URL}"
-                            echo "MQTT_SERVICE_URL => ${MQTT_SERVICE_URL}"
+                            echo "FRONT_SERVICE_URL => $FRONT_SERVICE_URL"
+                            echo "MQTT_SERVICE_URL => $MQTT_SERVICE_URL"
 
                             switch (store) {
                                 case "to_appaloosa":
-                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented("${FL_APPALOOSA_STORE_ID}", "${FL_APPALOOSA_API_TOKEN}", "${APPNAME_DEV}", "${BUNDLEID}_${target}", "true")
-                                    sh "sed \"s/${BUNDLEID}/${BUNDLEID}_${target}/g\" config.xml > config.xml.tmp"
-                                    sh "sed \"s/${APPNAME_DEV}/${APPNAME_DEV}-${target}/g\" config.xml.tmp > config.xml.tmp2"
-                                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${buildNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
+                                    def buildNumberIncremented = getAppaloosaBuildNumberIncremented(FL_APPALOOSA_STORE_ID, FL_APPALOOSA_API_TOKEN, APPNAME_DEV, "$BUNDLEID_$target", "true")
+                                    sh "sed \"s/$BUNDLEID/$BUNDLEID_$target/g\" config.xml > config.xml.tmp"
+                                    sh "sed \"s/$APPNAME_DEV/$APPNAME_DEV-$target/g\" config.xml.tmp > config.xml.tmp2"
+                                    sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                                     break
                                 case "to_google_play_beta":
-                                    def buildNumberIncremented = getGooglePlayBuildNumberIncremented("${BUNDLEID}")
-                                    sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"${buildNumberIncremented}\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
+                                    def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID)
+                                    sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
                                     break
                                 default:
                                     break
@@ -316,12 +292,12 @@ node('macosx-1') {
 
                         switch (store) {
                             case "to_appaloosa":
-                                sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:${APPNAME_DEV}-${target} appaloosa_group_ids:${APPALOOSA_GROUP_IDS}"
-                                archive "**/${APPNAME_DEV}-${target}.apk"
+                                sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
+                                archive "**/$APPNAME_DEV-$target.apk"
                                 break
                             case "to_google_play_beta":
-                                sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:${APPNAME_STORE}"
-                                archive "**/${APPNAME_STORE}.apk"
+                                sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:$APPNAME_STORE"
+                                archive "**/$APPNAME_STORE.apk"
                                 break
                             default:
                                 break
