@@ -6,11 +6,11 @@ def BUNDLEID = 'com.deveryware.dlightpalier'
 def APPALOOSA_GROUP_IDS = '16136'
 def MOBILE_DIRECTORY = '.'
 
-def TARGET_PREPROD = "${params.DEPLOY_ENV}"
-def TARGET_SNAPSHOT = "${TARGET_SNAPSHOT}"
-def TO_APPALOOSA = "${TO_APPALOOSA}"
-def TO_TESTFLIGHT = "${TO_TESTFLIGHT}"
-def TO_GOOGLE_PLAY_BETA = "${TO_GOOGLE_PLAY_BETA}"
+def TARGET_PREPROD = "${params.TARGET_PREPROD}"
+def TARGET_SNAPSHOT = "${params.TARGET_SNAPSHOT}"
+def TO_APPALOOSA = "${params.TO_APPALOOSA}"
+def TO_TESTFLIGHT = "${params.TO_TESTFLIGHT}"
+def TO_GOOGLE_PLAY_BETA = "${params.TO_GOOGLE_PLAY_BETA}"
 
 @NonCPS
 def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
