@@ -10,7 +10,8 @@ def TARGET_PREPROD = "${params.TARGET_PREPROD}"
 def TARGET_SNAPSHOT = "${params.TARGET_SNAPSHOT}"
 def TO_APPALOOSA = "${params.TO_APPALOOSA}"
 def TO_TESTFLIGHT = "${params.TO_TESTFLIGHT}"
-def TO_GOOGLE_PLAY_BETA = "${params.TO_GOOGLE_PLAY_BETA}"
+def TO_GOOGLE_PLAY = "${params.TO_GOOGLE_PLAY}"
+def TO_GOOGLE_PLAY_TRACK = "${params.TO_GOOGLE_PLAY_TRACK}"
 
 @NonCPS
 def getAppaloosaBuildNumberIncremented(def storeId, def apiKey, def groupName, def applicationId, def android) {
@@ -41,7 +42,7 @@ def getTestFlightBuildNumberIncremented(def applicationId, def version) {
 }
 
 def getGooglePlayBuildNumberIncremented(def applicationId) {
-    sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:$applicationId track:beta  | grep 'Result: ' | sed 's/.*Result: \\[\\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
+    sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:$applicationId track:$TO_GOOGLE_PLAY_TRACK  | grep 'Result: ' | sed 's/.*Result: \\[\\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
     def build_number_google_play = readFile('build_number_google_play.txt').trim()
     if (build_number_google_play?.trim()) {
         def existingBuildNumberTruncated = build_number_google_play.substring(0, build_number_google_play.length() - 1)
@@ -167,8 +168,8 @@ node('macosx-1') {
         stores.add('to_appaloosa')
     }
 
-    if (TO_GOOGLE_PLAY_BETA == "true") {
-        stores.add('to_google_play_beta')
+    if (TO_GOOGLE_PLAY == "true") {
+        stores.add('to_google_play')
     }
 
     for (store in stores) {
@@ -185,7 +186,7 @@ node('macosx-1') {
                     targets.add('snapshot')
                 }
                 break
-            case "to_google_play_beta":
+            case "to_google_play":
                 targets.add('prod')
                 break
             default:
@@ -253,7 +254,7 @@ node('macosx-1') {
                                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
                                     archive "**/${APPNAME_DEV}-${target}.apk"
                                     break
-                                case "to_google_play_beta":
+                                case "to_google_play":
                                     def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
 
@@ -280,7 +281,7 @@ node('macosx-1') {
                                     sh 'cordova plugin add cordova-custom-config --fetch '
                                     sh 'ionic cordova build android --release'
 
-                                    sh "~/.rbenv/shims/bundle exec fastlane android to_google_play_beta app:$APPNAME_STORE"
+                                    sh "~/.rbenv/shims/bundle exec fastlane android to_google_play app:$APPNAME_STORE track:$TO_GOOGLE_PLAY_TRACK"
                                     archive "**/${APPNAME_STORE}.apk"
                                     break
                                 default:
