@@ -41,8 +41,8 @@ def getTestFlightBuildNumberIncremented(def applicationId, def version) {
     return 1
 }
 
-def getGooglePlayBuildNumberIncremented(def applicationId) {
-    sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:$applicationId track:$TO_GOOGLE_PLAY_TRACK  | grep 'Result: ' | sed 's/.*Result: \\[\\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
+def getGooglePlayBuildNumberIncremented(def applicationId, def track) {
+    sh "~/.rbenv/shims/bundle exec fastlane run google_play_track_version_codes package_name:$applicationId track:$track  | grep 'Result: ' | sed 's/.*Result: \\[\\([0-9]*\\).*/\\1/' > build_number_google_play.txt"
     def build_number_google_play = readFile('build_number_google_play.txt').trim()
     if (build_number_google_play?.trim()) {
         def existingBuildNumberTruncated = build_number_google_play.substring(0, build_number_google_play.length() - 1)
@@ -255,7 +255,7 @@ node('macosx-1') {
                                     archive "**/${APPNAME_DEV}-${target}.apk"
                                     break
                                 case "to_google_play":
-                                    def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID)
+                                    def buildNumberIncremented = getGooglePlayBuildNumberIncremented($BUNDLEID, $TO_GOOGLE_PLAY_TRACK)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
 
                                     sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
