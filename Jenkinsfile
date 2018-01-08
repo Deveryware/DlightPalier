@@ -255,7 +255,7 @@ node('macosx-1') {
                                     archive "**/${APPNAME_DEV}-${target}.apk"
                                     break
                                 case "to_google_play":
-                                    def buildNumberIncremented = getGooglePlayBuildNumberIncremented($BUNDLEID, $TO_GOOGLE_PLAY_TRACK)
+                                    def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID, TO_GOOGLE_PLAY_TRACK)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
 
                                     sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
