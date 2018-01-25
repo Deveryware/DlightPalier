@@ -228,27 +228,9 @@ node('macosx-4') {
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                                     sh "cat config.xml | head"
 
-                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android'
-                                    sh 'cordova plugin add cordova-plugin-device'
-                                    sh 'cordova plugin add cordova-plugin-console'
-                                    sh 'cordova plugin add cordova-plugin-whitelist'
-                                    sh 'cordova plugin add cordova-plugin-splashscreen'
-                                    sh 'cordova plugin add cordova-plugin-statusbar'
-                                    sh 'cordova plugin add cordova-plugin-geolocation'
-                                    sh 'cordova plugin add ionic-plugin-keyboard'
-                                    sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
-                                    sh 'cordova plugin add cordova-plugin-crosswalk-webview'
-                                    sh 'cordova plugin add cordova-plugin-insomnia'
-                                    sh 'cordova plugin add cordova-plugin-tts'
-                                    sh 'cordova plugin add cordova-plugin-device-orientation'
-                                    sh 'cordova plugin add cordova.plugins.diagnostic'
-                                    sh 'cordova plugin add cordova-open-native-settings'
-                                    sh 'cordova plugin add cordova-plugin-camera'
-                                    sh 'cordova plugin add cordova-plugin-file'
-                                    sh 'cordova plugin add cordova-plugin-add-swift-support'
-                                    sh 'cordova plugin add cordova-plugin-photo-library'
+                                    sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android'
+
                                     sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
-                                    sh 'cordova plugin add cordova-custom-config --fetch '
                                     sh 'ionic cordova build android --release'
 
                                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
@@ -258,27 +240,9 @@ node('macosx-4') {
                                     def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID, TO_GOOGLE_PLAY_TRACK)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
 
-                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android'
-                                    sh 'cordova plugin add cordova-plugin-device'
-                                    sh 'cordova plugin add cordova-plugin-console'
-                                    sh 'cordova plugin add cordova-plugin-whitelist'
-                                    sh 'cordova plugin add cordova-plugin-splashscreen'
-                                    sh 'cordova plugin add cordova-plugin-statusbar'
-                                    sh 'cordova plugin add cordova-plugin-geolocation'
-                                    sh 'cordova plugin add ionic-plugin-keyboard'
-                                    sh 'cordova plugin add cordova-plugin-ios-disableshaketoedit'
-                                    sh 'cordova plugin add cordova-plugin-crosswalk-webview'
-                                    sh 'cordova plugin add cordova-plugin-insomnia'
-                                    sh 'cordova plugin add cordova-plugin-tts'
-                                    sh 'cordova plugin add cordova-plugin-device-orientation'
-                                    sh 'cordova plugin add cordova.plugins.diagnostic'
-                                    sh 'cordova plugin add cordova-open-native-settings'
-                                    sh 'cordova plugin add cordova-plugin-camera'
-                                    sh 'cordova plugin add cordova-plugin-file'
-                                    sh 'cordova plugin add cordova-plugin-add-swift-support'
-                                    sh 'cordova plugin add cordova-plugin-photo-library'
+                                    sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android'
+
                                     sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
-                                    sh 'cordova plugin add cordova-custom-config --fetch '
                                     sh 'ionic cordova build android --release'
 
                                     sh "~/.rbenv/shims/bundle exec fastlane android to_google_play app:$APPNAME_STORE track:$TO_GOOGLE_PLAY_TRACK"
