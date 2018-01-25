@@ -156,7 +156,7 @@ node('macosx-1') {
 
 // BUILD ANDROID
 
-node('macosx-1') {
+node('macosx-4') {
 
     env.LC_ALL = 'en_US.UTF-8'
     env.LANG = 'en_US.UTF-8'
