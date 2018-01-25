@@ -231,7 +231,7 @@ node('macosx-1') {
                                     sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android'
 
                                     sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
-                                    sh 'ionic cordova build android --release'
+                                    sh 'ionic cordova build android --release --device'
 
                                     sh "~/.rbenv/shims/bundle exec fastlane android to_appaloosa app:$APPNAME_DEV-$target appaloosa_group_ids:$APPALOOSA_GROUP_IDS"
                                     archive "**/${APPNAME_DEV}-${target}.apk"
@@ -243,7 +243,7 @@ node('macosx-1') {
                                     sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android'
 
                                     sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
-                                    sh 'ionic cordova build android --release'
+                                    sh 'ionic cordova build android --release --device'
 
                                     sh "~/.rbenv/shims/bundle exec fastlane android to_google_play app:$APPNAME_STORE track:$TO_GOOGLE_PLAY_TRACK"
                                     archive "**/${APPNAME_STORE}.apk"
