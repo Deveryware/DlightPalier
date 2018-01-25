@@ -228,7 +228,7 @@ node('macosx-1') {
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                                     sh "cat config.xml | head"
 
-                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android'
                                     sh 'cordova plugin add cordova-plugin-device'
                                     sh 'cordova plugin add cordova-plugin-console'
                                     sh 'cordova plugin add cordova-plugin-whitelist'
@@ -258,7 +258,7 @@ node('macosx-1') {
                                     def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID, TO_GOOGLE_PLAY_TRACK)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
 
-                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android@6.1.2'
+                                    sh 'npm install && npm install cordova-custom-config && ionic cordova platform rm android && ionic cordova platform add android'
                                     sh 'cordova plugin add cordova-plugin-device'
                                     sh 'cordova plugin add cordova-plugin-console'
                                     sh 'cordova plugin add cordova-plugin-whitelist'
