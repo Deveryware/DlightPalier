@@ -228,7 +228,7 @@ node('macosx-4') {
                                     sh "sed \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml.tmp2 > config.xml"
                                     sh "cat config.xml | head"
 
-                                    sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android'
+                                    sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android@7.0.0'
 
                                     sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
                                     sh 'ionic cordova build android --release'
@@ -240,7 +240,7 @@ node('macosx-4') {
                                     def buildNumberIncremented = getGooglePlayBuildNumberIncremented(BUNDLEID, TO_GOOGLE_PLAY_TRACK)
                                     sh "sed -i '' \"s/xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/android-versionCode=\\\"$buildNumberIncremented\\\" xmlns=\\\"http:\\/\\/www.w3.org\\/ns\\/widgets\\\"/g\" config.xml"
 
-                                    sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android'
+                                    sh 'npm install && ionic cordova platform rm android && ionic cordova platform add android@7.0.0'
 
                                     sh 'cordova plugin add cordova-fabric-plugin --variable FABRIC_API_SECRET=$FABRIC_API_SECRET --variable FABRIC_API_KEY=$FABRIC_API_KEY'
                                     sh 'ionic cordova build android --release'
